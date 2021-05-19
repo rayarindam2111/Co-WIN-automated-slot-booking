@@ -117,7 +117,9 @@ var loadValues = async () => {
     let sList = await cowinController.getStateList();
     UI.performCommand('states', sList);
 
-    let dList = await cowinController.getDistrictList(data.state || DEFAULT_STATEID);
+    let sID = (!data.state || (data.state == -1)) ? DEFAULT_STATEID : data.state;
+
+    let dList = await cowinController.getDistrictList(sID);
     UI.performCommand('districts', dList);
 
     let bList = await umangController.getBeneficiaryList();

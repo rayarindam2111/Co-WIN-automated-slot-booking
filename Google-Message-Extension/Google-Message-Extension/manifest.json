@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Co-WIN automated slot booking GMessage plugin",
+  "name": "Automated vaccine slot booking GMessage plugin",
   "author": "Arindam Ray",
   "version": "0.0.1",
-  "description": "This extension helps you communicate with Google Messages to sync OTPs automatically.",
+  "description": "This extension helps you communicate with Google Messages to sync OTPs automatically with the automated vaccine slot booking site.",
   "content_scripts": [
     {
       "matches": [

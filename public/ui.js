@@ -73,7 +73,6 @@ class ui {
     loginComplete() {
         document.getElementById('loginForm').classList.add('d-none');
         document.getElementById('mainArea').classList.remove('d-none');
-        this.toastMessage('Login successfull.');
     }
 
     performCommand(command, data) {
@@ -130,6 +129,7 @@ class ui {
         }
         else if (command == "update") {
             document.getElementById('status').value = data.status;
+            document.getElementById('status').style.backgroundColor = data.status.startsWith('Booked') ? '#4dea4d' : '#e9ecef';
             document.getElementById('lastUpdated').value = data.lastUpdated;
         }
         else if (command == "errorMessage") {
@@ -149,15 +149,15 @@ class ui {
             document.getElementById('captchaInput').focus();
         }
         else if (command == "setData") {
-            data.state && (document.getElementById('stateSelect').value = data.state);
-            data.district && (document.getElementById('districtSelect').value = data.district);
-            data.beneficiary && (document.getElementById('beneficiarySelect').value = data.beneficiary);
-            data.age && (document.getElementById('ageSelect').value = data.age);
-            data.dose && (document.getElementById('doseSelect').value = data.dose);
-            data.slot && (document.getElementById('slotSelect').value = data.slot);
-            data.feeType && (document.getElementById('paymentSelect').value = data.feeType);
-            data.vaccineName && (document.getElementById('vaccineSelect').value = data.vaccineName);
-            data.frequency && (document.getElementById('rangeDuration').value = data.frequency);
+            data.state && (data.state != -1) && (document.getElementById('stateSelect').value = data.state);
+            data.district && (data.district != -1) && (document.getElementById('districtSelect').value = data.district);
+            data.beneficiary && (data.beneficiary != -1) && (document.getElementById('beneficiarySelect').value = data.beneficiary);
+            data.age && (data.age != -1) && (document.getElementById('ageSelect').value = data.age);
+            data.dose && (data.dose != -1) && (document.getElementById('doseSelect').value = data.dose);
+            data.slot && (data.slot != -1) && (document.getElementById('slotSelect').value = data.slot);
+            data.feeType && (data.feeType != -1) && (document.getElementById('paymentSelect').value = data.feeType);
+            data.vaccineName && (data.vaccineName != -1) && (document.getElementById('vaccineSelect').value = data.vaccineName);
+            data.frequency && (data.frequency != -1) && (document.getElementById('rangeDuration').value = data.frequency);
         }
     }
 }
