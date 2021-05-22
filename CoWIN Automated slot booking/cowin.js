@@ -363,7 +363,7 @@ let setupDOM = async function () {
 }
 
 let init = async function () {
-  warningSound = new sound('http://codeskulptor-demos.commondatastorage.googleapis.com/descent/gotitem.mp3', true);
+  warningSound = new sound('https://codeskulptor-demos.commondatastorage.googleapis.com/descent/gotitem.mp3', true);
   await setupDOM();
 
   let modalOpen = document.getElementById('modalOpen');
