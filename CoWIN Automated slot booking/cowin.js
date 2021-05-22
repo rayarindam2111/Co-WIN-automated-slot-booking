@@ -29,10 +29,10 @@ class sound {
 }
 
 let digestMessage = async function (message) {
-  const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
-  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);           // hash the message
-  const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+  const msgUint8 = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   return hashHex;
 }
 
@@ -47,85 +47,103 @@ let dateStr = function (dateVal) {
 }
 
 let generateOTP = async function () {
-  let secret = "U2FsdGVkX1//EanSfJMhknl5j8wJ6JEXg02R1uJDck53GNKTIfqk8tH4F4kfgcVyiODyWGMmxyGu/bHZrjg6AQ==";
+  try {
+    let secret = "U2FsdGVkX1//EanSfJMhknl5j8wJ6JEXg02R1uJDck53GNKTIfqk8tH4F4kfgcVyiODyWGMmxyGu/bHZrjg6AQ==";
 
-  let fetchData = await fetch(`${api_head}/auth/public/generateOTP`,
-    {
-      "headers": {
-        "accept": "application/json",
-        "Content-Type": "application/json",
-        "user-agent": user_agent
-      },
-      "body": JSON.stringify({
-        "mobile": phoneNumber,
-        "secret": secret
-      }),
-      "method": "POST"
-    });
+    let fetchData = await fetch(`${api_head}/auth/public/generateOTP`,
+      {
+        "headers": {
+          "accept": "application/json",
+          "Content-Type": "application/json",
+          "user-agent": user_agent
+        },
+        "body": JSON.stringify({
+          "mobile": phoneNumber,
+          "secret": secret
+        }),
+        "method": "POST"
+      });
 
-  let txnID = await fetchData.json();
-  txnID = txnID.txnId;
+    let txnID = await fetchData.json();
+    txnID = txnID.txnId;
 
-  return txnID;
+    return txnID;
+  }
+  catch (err) {
+    console.log('Error in generateOTP.', err.message);
+  }
 }
 
 let confirmOTP = async function (OTP) {
-  let otpSHA = await digestMessage(OTP);
+  try {
+    let otpSHA = await digestMessage(OTP);
 
-  let fetchData = await fetch(`${api_head}/auth/public/confirmOTP`,
-    {
-      "headers": {
-        "accept": "application/json",
-        "Content-Type": "application/json",
-        "user-agent": user_agent
-      },
-      "body": JSON.stringify({
-        "otp": otpSHA,
-        "txnId": txnID
-      }),
-      "method": "POST"
-    });
+    let fetchData = await fetch(`${api_head}/auth/public/confirmOTP`,
+      {
+        "headers": {
+          "accept": "application/json",
+          "Content-Type": "application/json",
+          "user-agent": user_agent
+        },
+        "body": JSON.stringify({
+          "otp": otpSHA,
+          "txnId": txnID
+        }),
+        "method": "POST"
+      });
 
-  let tokenString = await fetchData.json();
-  tokenString = tokenString.token;
+    let tokenString = await fetchData.json();
+    tokenString = tokenString.token;
 
-  return tokenString;
+    return tokenString;
+  }
+  catch (err) {
+    console.log('Error in confirmOTP.', err.message);
+  }
 }
 
 let stateList = async function () {
+  try {
+    let fetchData = await fetch(`${api_head}/admin/location/states`, {
+      "headers": {
+        "accept": "application/json*",
+        "Content-Type": "application/json",
+        "user-agent": user_agent,
+        "authorization": "Bearer " + tokenString
+      },
+      "method": "GET",
+    });
 
-  let fetchData = await fetch(`${api_head}/admin/location/states`, {
-    "headers": {
-      "accept": "application/json*",
-      "Content-Type": "application/json",
-      "user-agent": user_agent,
-      "authorization": "Bearer " + tokenString
-    },
-    "method": "GET",
-  });
+    let sList = await fetchData.json();
+    sList = sList.states;
 
-  let sList = await fetchData.json();
-  sList = sList.states;
-
-  return sList;
+    return sList;
+  }
+  catch (err) {
+    console.log('Error in stateList.', err.message);
+  }
 }
 
 let districtList = async function (stateID) {
+  try {
+    let fetchData = await fetch(`${api_head}/admin/location/districts/${stateID}`, {
+      "headers": {
+        "accept": "application/json*",
+        "Content-Type": "application/json",
+        "user-agent": user_agent,
+        "authorization": "Bearer " + tokenString
+      },
+      "method": "GET",
+    });
 
-  let fetchData = await fetch(`${api_head}/admin/location/districts/${stateID}`, {
-    "headers": {
-      "accept": "application/json*",
-      "Content-Type": "application/json",
-      "user-agent": user_agent,
-      "authorization": "Bearer " + tokenString
-    },
-    "method": "GET",
-  });
+    let dList = await fetchData.json();
+    dList = dList.districts;
 
-  let dList = await fetchData.json();
-  dList = dList.districts;
-
-  return dList;
+    return dList;
+  }
+  catch (err) {
+    console.log('Error in districtList.', err.message);
+  }
 }
 
 let beneficiaryList = async function () {
@@ -149,8 +167,9 @@ let beneficiaryList = async function () {
     });
 
     return b_ids;
-  } catch (err) {
-    console.log("Error fetching beneficicary.");
+  }
+  catch (err) {
+    console.log('Error in beneficiaryList.', err.message);
   }
 }
 
@@ -175,76 +194,107 @@ let errorsFound = async function () {
 
     return false;
   } catch (err) {
+    console.log('Error in errorsFound.', err.message);
     return true;
   }
 
 }
 
 let calendarList = async function (districtID, dateString) {
-  let fetchData = await fetch(`${api_head}/appointment/sessions/calendarByDistrict?district_id=${districtID}&date=${dateStr(dateString)}`, {
-    "headers": {
-      "accept": "application/json*",
-      "Content-Type": "application/json",
-      "user-agent": user_agent,
-      "authorization": "Bearer " + tokenString
-    },
-    "method": "GET"
-  });
-
-  let datalist = await fetchData.json();
-
-  return datalist;
-}
-
-let getCaptcha = async function () {
-  let fetchData = await fetch(`${api_head}/auth/getRecaptcha`, {
-    "headers": {
-      "accept": "application/json*",
-      "Content-Type": "application/json",
-      "user-agent": user_agent,
-      "authorization": "Bearer " + tokenString
-    },
-    "body": "{}",
-    "method": "POST"
-  });
-
-  let svgData = await fetchData.json();
-
-  return svgData;
-}
-
-let bookSlot = async function (sessionID, centerID, beneficiaries, dose, vaccineSlot, captcha) {
-
-  let packData = {
-    "center_id": centerID,
-    "session_id": sessionID,
-    "beneficiaries": beneficiaries,
-    "slot": vaccineSlot,
-    "captcha": captcha,
-    "dose": dose
-  };
-  console.log("Data:", packData);
-
-  let fetchData = await fetch(`${api_head}/appointment/schedule`,
-    {
+  try {
+    let fetchData = await fetch(`${api_head}/appointment/sessions/calendarByDistrict?district_id=${districtID}&date=${dateStr(dateString)}`, {
       "headers": {
         "accept": "application/json*",
         "Content-Type": "application/json",
         "user-agent": user_agent,
         "authorization": "Bearer " + tokenString
       },
-      "body": JSON.stringify(packData),
+      "method": "GET"
+    });
+
+    let datalist = await fetchData.json();
+
+    return datalist;
+  } catch (err) {
+    console.log('Error in calendarList.', err.message);
+    return true;
+  }
+}
+
+let getCaptcha = async function () {
+  try {
+    let fetchData = await fetch(`${api_head}/auth/getRecaptcha`, {
+      "headers": {
+        "accept": "application/json*",
+        "Content-Type": "application/json",
+        "user-agent": user_agent,
+        "authorization": "Bearer " + tokenString
+      },
+      "body": "{}",
       "method": "POST"
     });
 
-  let appointmentIDDict = await fetchData.json();
+    let svgData = await fetchData.json();
 
-  return appointmentIDDict;
+    return svgData;
+  } catch (err) {
+    console.log('Error in getCaptcha.', err.message);
+    return true;
+  }
 }
 
-let retryBook = async function (distID, dateStr, beneficiaries, minAge, dose, vaccineSlot, feeType, vaccineName, captcha) {
+let bookSlot = async function (sessionID, centerID, beneficiaries, dose, vaccineSlot, captcha) {
+  try {
+    let packData = {
+      "center_id": centerID,
+      "session_id": sessionID,
+      "beneficiaries": beneficiaries,
+      "slot": vaccineSlot,
+      "captcha": captcha,
+      "dose": dose
+    };
+    console.log("Data:", packData);
+
+    let fetchData = await fetch(`${api_head}/appointment/schedule`,
+      {
+        "headers": {
+          "accept": "application/json*",
+          "Content-Type": "application/json",
+          "user-agent": user_agent,
+          "authorization": "Bearer " + tokenString
+        },
+        "body": JSON.stringify(packData),
+        "method": "POST"
+      });
+
+    let appointmentIDDict = await fetchData.json();
+
+    return appointmentIDDict;
+  } catch (err) {
+    console.log('Error in bookSlot.', err.message);
+    return true;
+  }
+}
+
+let retryBook = async function (distID, dateStr, beneficiaries, minAge, dose, vaccineSlot, feeType, vaccineName, captcha, oldBooking) {
+  if (oldBooking) {
+    let slotsToTry = sessionStorage.getItem("availableSlots") && JSON.parse(sessionStorage.getItem("availableSlots"));
+
+    for (let k = 0; k < slotsToTry.length; k++) {
+      let slotData = slotsToTry[k];
+      let responseBooking = await bookSlot(slotData.sid, slotData.cid, slotData.ben, slotData.dose, slotData.slot, captcha);
+      if (responseBooking.appointment_id) {
+        console.log('Booked.', responseBooking);
+        return true;
+      }
+    }
+  }
+
+
   let calendarData = await calendarList(distID, dateStr);
   let booked = false;
+
+  let availableSlots = [];
 
   let centers = calendarData.centers;
 
@@ -253,14 +303,14 @@ let retryBook = async function (distID, dateStr, beneficiaries, minAge, dose, va
     [centers[m], centers[n]] = [centers[n], centers[m]];
   }
 
+  let errorsDetected = false;
+
   for (let i = 0; i < centers.length; i++) {
     let hospital = centers[i];
 
     if (feeType != "0" && feeType.toLowerCase() != hospital.fee_type.toLowerCase()) continue;
     let sessions = hospital.sessions;
     let center_id = hospital.center_id;
-    booked = false;
-    let errorsDetected = false;
 
     for (let j = 0; j < sessions.length; j++) {
       let session = sessions[j];
@@ -269,27 +319,40 @@ let retryBook = async function (distID, dateStr, beneficiaries, minAge, dose, va
       if (session[`available_capacity_dose${dose}`] == 0) continue;
       if (vaccineName != "0" && vaccineName.toLowerCase() != session.vaccine.toLowerCase()) continue;
 
-      if (await errorsFound()) {
-        errorsDetected = true;
-        showError();
-        document.location = document.location.origin;
-      }
-
       let slotString = session.slots.slice(vaccineSlot)[0];
+
+      if (errorsDetected || await errorsFound()) {
+        errorsDetected = true;
+        availableSlots.push({
+          sid: session.session_id,
+          cid: center_id,
+          ben: beneficiaries,
+          dose: dose,
+          slot: slotString
+        });
+      }
 
       let responseBooking = await bookSlot(session.session_id, center_id, beneficiaries, dose, slotString, captcha);
       console.log('Booked.', responseBooking);
-      booked = true;
-      break;
+      if (responseBooking.appointment_id) {
+        booked = true;
+        break;
+      }
     }
 
-    if (booked || errorsDetected) break;
+    if (booked) break;
+  }
+
+  if (errorsDetected) {
+    sessionStorage.setItem("availableSlots", JSON.stringify(availableSlots));
+    showError();
+    document.location = document.location.origin;
   }
 
   return booked;
 }
 
-let main = async function (district, beneficiary, age, dose, slot, feeType, vaccineName, frequency, captcha) {
+let main = async function (district, beneficiary, age, dose, slot, feeType, vaccineName, frequency, captcha, oldBooking) {
   // let txnID = await generateOTP();
   // tokenString = await confirmOTP(OTPText);
   let today = Date.now();
@@ -298,7 +361,7 @@ let main = async function (district, beneficiary, age, dose, slot, feeType, vacc
   let booked = false;
 
   let tryFunc = async function () {
-    booked = await retryBook(district, today, beneficiary, age, dose, slot, feeType, vaccineName, captcha);
+    booked = await retryBook(district, today, beneficiary, age, dose, slot, feeType, vaccineName, captcha, oldBooking);
     let status = "";
     let lastUpdated = new Date(Date.now()).toLocaleString();
 
@@ -420,6 +483,8 @@ let init = async function () {
   if (working) {
     warningSound.play();
     let loadedData = loadSettings();
+
+    oldBooking = true;
 
     tokenString = sessionStorage.getItem("userToken") && sessionStorage.getItem("userToken").slice(1, -1);
 
@@ -571,7 +636,7 @@ window.addEventListener("message", async (event) => {
         data: ""
       }
     }, "*");
-    await main(data.district, data.beneficiary, data.age, data.dose, data.slot, data.feeType, data.vaccineName, data.frequency, data.captcha);
+    await main(data.district, data.beneficiary, data.age, data.dose, data.slot, data.feeType, data.vaccineName, data.frequency, data.captcha, oldBooking);
   }
   else if (command == "stop") {
     clearInterval(bookingTimer);
@@ -590,6 +655,7 @@ let windowIframe = null;
 let bookingTimer = null;
 let working = false;
 let warningSound = null;
+let oldBooking = false;
 
 console.log("Extension script loaded.");
 init();
