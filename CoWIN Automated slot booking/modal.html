@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Co-WIN registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        p.h2>img {
+            margin-top: -10px;
+        }
+
+        #autherr {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            z-index: 10;
+        }
+
+        #captchaImage {
+            height: 70px;
+            width: auto;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            float: right;
+        }
+
+        ::-webkit-scrollbar {
+            background-color: #fff;
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: #fff;
+        }
+
+        ::-webkit-scrollbar-track:hover {
+            background-color: #f4f4f4;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #c5c5ca;
+            border-radius: 12px;
+            border: 3px solid #fff;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #a0a0a5;
+            border: 2px solid #f4f4f4;
+        }
+
+        ::-webkit-scrollbar-button {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="autherr" class="d-none">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img"
+                aria-label="Warning:">
+                <path
+                    d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+            </svg>
+            <div>
+                Authentication error. Please ensure you are logged in to the Co-WIN portal!
+            </div>
+        </div>
+    </div>
+    <div id="mainArea" class="container">
+        <p class="h2">
+            <img width="35"
+                src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJDYXBhXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgNDcwIDQ3MCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDcwIDQ3MDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPGc+DQoJPHBhdGggZD0iTTMwOC42OTksMTg0LjY5OUwxODYuMjk3LDMwNy4xMDJsLTIzLjY1NC0yMy42NTRsMjEuMzItMjEuMzJsNy43NDQsNy43NDRjMS40NjQsMS40NjUsMy4zODQsMi4xOTcsNS4zMDMsMi4xOTcNCgkJczMuODM5LTAuNzMyLDUuMzA0LTIuMTk3YzIuOTI5LTIuOTI5LDIuOTI5LTcuNjc4LTAuMDAxLTEwLjYwNmwtNy43NDMtNy43NDNsMjEuMzItMjEuMzJsNy43NDQsNy43NDQNCgkJYzEuNDY1LDEuNDY0LDMuMzg1LDIuMTk3LDUuMzA0LDIuMTk3czMuODM5LTAuNzMyLDUuMzA0LTIuMTk3YzIuOTI5LTIuOTI5LDIuOTI5LTcuNjc4LDAtMTAuNjA2bC03Ljc0NC03Ljc0NGwyMS4zMi0yMS4zMg0KCQlsNy43NDQsNy43NDRjMS40NjQsMS40NjUsMy4zODQsMi4xOTcsNS4zMDMsMi4xOTdzMy44MzktMC43MzIsNS4zMDQtMi4xOTdjMi45MjktMi45MjksMi45MjktNy42NzgtMC4wMDEtMTAuNjA2bC03Ljc0NC03Ljc0Mw0KCQlsMjEuMzItMjEuMzJsNy43NDMsNy43NDNjMS40NjUsMS40NjUsMy4zODQsMi4xOTcsNS4zMDQsMi4xOTdjMS45MTksMCwzLjgzOS0wLjczMiw1LjMwMy0yLjE5Nw0KCQljMi45My0yLjkyOSwyLjkzLTcuNjc3LDAuMDAxLTEwLjYwNmwtMTMuMDQ2LTEzLjA0NmMtMS4wOTktMS4wOTktMi40NTMtMS43ODUtMy44NzItMi4wNmMtMC4xMjctMC4wMjUtMC4yNTUtMC4wMzctMC4zODItMC4wNTUNCgkJYy0wLjExLTAuMDE2LTAuMjItMC4wMzctMC4zMzEtMC4wNDhjLTIuMTUyLTAuMjA2LTQuMzc1LDAuNTE0LTYuMDI0LDIuMTYyTDE0Ni43MzIsMjc4LjE0NWMtMS40MDYsMS40MDYtMi4xOTYsMy4zMTQtMi4xOTYsNS4zMDMNCgkJczAuNzksMy44OTcsMi4xOTYsNS4zMDNsMzQuMjYxLDM0LjI2YzEuNDY1LDEuNDY0LDMuMzg1LDIuMTk3LDUuMzA0LDIuMTk3czMuODM5LTAuNzMyLDUuMzA0LTIuMTk3bDEyNy43MDYtMTI3LjcwNg0KCQljMi45MjktMi45MjksMi45MjktNy42NzgsMC0xMC42MDZDMzE2LjM3NywxODEuNzcxLDMxMS42MjksMTgxLjc3MSwzMDguNjk5LDE4NC42OTl6Ii8+DQoJPHBhdGggZD0iTTI5MS4zMjEsNTAuNDM1Yy0yLjkzLTIuOTI5LTcuNjc4LTIuOTI5LTEwLjYwNywwYy0yLjkyOSwyLjkyOS0yLjkyOSw3LjY3OCwwLDEwLjYwNmwyMC4zNDgsMjAuMzQ4bC0xODYuMTQ5LDE4Ni4xNQ0KCQljLTguNzcxLDguNzczLTguNzcxLDIzLjA0NywwLDMxLjgxOWw1NS40NzQsNTUuNDczYzQuMjM4LDQuMjM4LDkuODg5LDYuNTcyLDE1LjkxLDYuNTcyYzYuMDIyLDAsMTEuNjczLTIuMzM0LDE1LjkxLTYuNTcyDQoJCWwxODYuMTQ5LTE4Ni4xNDlsMjAuMzQ4LDIwLjM0OGMxLjQ2NSwxLjQ2NCwzLjM4NSwyLjE5Nyw1LjMwNCwyLjE5N3MzLjgzOS0wLjczMiw1LjMwNC0yLjE5N2MyLjkyOS0yLjkyOSwyLjkyOS03LjY3OCwwLTEwLjYwNg0KCQlMMjkxLjMyMSw1MC40MzV6IE0xOTEuNTk5LDM0NC4yMjZjLTEuNDA0LDEuNDA1LTMuMjg3LDIuMTc4LTUuMzAzLDIuMTc4Yy0yLjAxNSwwLTMuODk4LTAuNzc0LTUuMzAzLTIuMTc5bC01NS40NzQtNTUuNDczDQoJCWMtMi45MjQtMi45MjQtMi45MjQtNy42ODMsMC0xMC42MDdMMzExLjY2OSw5MS45OTdsNjYuMDgsNjYuMDhMMTkxLjU5OSwzNDQuMjI2eiIvPg0KCTxwYXRoIGQ9Ik00NjcuNTUsODMuMDE4bC0yMi44MjItMjIuODIyYzAsMC0wLjAwMS0wLjAwMS0wLjAwMS0wLjAwMXMtMC4wMDEtMC4wMDEtMC4wMDEtMC4wMDFMMzg2LjcyNywyLjE5Nw0KCQljLTIuOTMtMi45MjktNy42NzgtMi45MjktMTAuNjA3LDBjLTIuOTI5LDIuOTI5LTIuOTI5LDcuNjc4LDAsMTAuNjA2bDE3LjUyLDE3LjUybC00NS4zMDUsNDUuMzA2DQoJCWMtMi45MjksMi45MjktMi45MjksNy42NzgsMCwxMC42MDZjMS40NjUsMS40NjQsMy4zODUsMi4xOTcsNS4zMDQsMi4xOTdzMy44MzktMC43MzIsNS4zMDQtMi4xOTdsNDUuMzA1LTQ1LjMwNmwyNC41NjksMjQuNTY4DQoJCWwtNDUuMzA2LDQ1LjMwNmMtMi45MjksMi45MjktMi45MjksNy42NzgsMCwxMC42MDZjMS40NjUsMS40NjQsMy4zODUsMi4xOTcsNS4zMDQsMi4xOTdzMy44MzktMC43MzIsNS4zMDQtMi4xOTdsNDUuMzA2LTQ1LjMwNg0KCQlsMTcuNTIsMTcuNTJjMS40NjUsMS40NjQsMy4zODUsMi4xOTcsNS4zMDQsMi4xOTdzMy44MzktMC43MzIsNS4zMDQtMi4xOTdDNDcwLjQ3OCw5MC42OTYsNDcwLjQ3OCw4NS45NDcsNDY3LjU1LDgzLjAxOHoiLz4NCgk8cGF0aCBkPSJNMTQ1LjI0LDM1MC44OThjLTAuMDAzLTAuMDAzLTAuMDA1LTAuMDA2LTAuMDA4LTAuMDA5cy0wLjAwNi0wLjAwNS0wLjAwOS0wLjAwOGwtMjYuMzY0LTI2LjM2NGMwLDAsMC0wLjAwMS0wLjAwMS0wLjAwMQ0KCQlzMCwwLTAuMDAxLTAuMDAxbC03LjA3LTcuMDcxYy0yLjkyOS0yLjkyOS03LjY3Ny0yLjkzLTEwLjYwNywwYy0yLjkyOSwyLjkyOS0yLjkyOSw3LjY3OCwwLDEwLjYwNmwxLjc2OCwxLjc2OGwtMjUuMTQ1LDI1LjE0Ng0KCQljLTMuMjk4LDMuMjk4LTUuMTE0LDcuNjkyLTUuMTE0LDEyLjM3NWMwLDQuNjgyLDEuODE2LDkuMDc3LDUuMTEzLDEyLjM3NGwxLjA2NiwxLjA2NkwyLjQ1LDQ1Ny4xOTcNCgkJYy0yLjkyOSwyLjkyOS0yLjkyOSw3LjY3OCwwLDEwLjYwNkMzLjkxNSw0NjkuMjY3LDUuODM1LDQ3MCw3Ljc1NCw0NzBzMy44MzktMC43MzIsNS4zMDQtMi4xOTdsNzYuNDE2LTc2LjQxNmwwLjU1OCwwLjU1OA0KCQljMy40MTIsMy40MTIsNy44OTMsNS4xMTcsMTIuMzc1LDUuMTE3YzQuNDgsMCw4Ljk2My0xLjcwNiwxMi4zNzQtNS4xMTdsMjUuMTQ2LTI1LjE0NmwxLjc2NywxLjc2Nw0KCQljMS40NjUsMS40NjUsMy4zODQsMi4xOTcsNS4zMDQsMi4xOTdjMS45MTksMCwzLjgzOS0wLjczMiw1LjMwNC0yLjE5N2MyLjkyOS0yLjkyOSwyLjkyOS03LjY3OCwwLTEwLjYwNkwxNDUuMjQsMzUwLjg5OHoNCgkJIE0xMDQuMTc0LDM4MS4zMzljLTAuOTU2LDAuOTU3LTIuNTc2LDAuOTU5LTMuNTM0LDBsLTEyLjIzMi0xMi4yMzJjLTAuNjI2LTAuNjI2LTAuNzItMS4zNzYtMC43Mi0xLjc2Nw0KCQljMC0wLjM5MiwwLjA5NC0xLjE0MSwwLjcyMS0xLjc2OGwyNS4xNDYtMjUuMTQ2bDE1Ljc2NywxNS43NjdMMTA0LjE3NCwzODEuMzM5eiIvPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPC9zdmc+DQo="
+                alt="Vaccine booking">
+            <span>Automated vaccine registration</span>
+        </p>
+        <hr>
+        <div class="row">
+            <div class="col-6">
+                <label for="stateSelect" class="form-label">Select State:</label>
+                <select class="form-select mb-2" id="stateSelect">
+                    <option selected value="-1">-</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <label for="districtSelect" class="form-label">Select district:</label>
+                <select class="form-select mb-2" id="districtSelect">
+                    <option value="-1">-</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <label for="beneficiarySelect" class="form-label">Select beneficiary:</label>
+                <select class="form-select mb-2" id="beneficiarySelect">
+                    <option selected value="-1">-</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <label for="ageSelect" class="form-label">Select age:</label>
+                <select class="form-select mb-2" id="ageSelect">
+                    <option value="18">18 - 45 years</option>
+                    <option value="45">45+ years</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <label for="vaccineSelect" class="form-label">Select vaccine:</label>
+                <select class="form-select mb-2" id="vaccineSelect">
+                    <option selected value="0">Any</option>
+                    <option value="COVAXIN">Covaxin</option>
+                    <option value="COVISHIELD">Covishield</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <label for="doseSelect" class="form-label">Select dose:</label>
+                <select class="form-select mb-2" id="doseSelect">
+                    <option selected value="1">Dose 1</option>
+                    <option value="2">Dose 2</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <label for="paymentSelect" class="form-label">Select category:</label>
+                <select class="form-select mb-2" id="paymentSelect">
+                    <option value="0">Any</option>
+                    <option selected value="Paid">Paid</option>
+                    <option value="Free">Free</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <label for="slotSelect" class="form-label">Select slot:</label>
+                <select class="form-select mb-2" id="slotSelect">
+                    <option value="0">Morning</option>
+                    <option value="-1">Afternoon</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-8">
+                <label for="captchaInput" class="form-label">Captcha:</label>
+                <input id="captchaInput" class="form-control" type="text" placeholder="Enter Captcha">
+            </div>
+            <div class="col-4">
+                <img id="captchaImage" src="" alt="Captcha Image">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 ">
+                <label for="rangeDuration" class="form-label mb-0">Update frequency:</label>
+                <input type="range" class="form-range" min="1" max="90" step="1" value="90" id="rangeDuration">
+            </div>
+        </div>
+        <hr class="mt-1">
+        <div class="row">
+            <div class="col-6">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" id="startButton" type="button">Start</button>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-danger" id="stopButton" type="button" disabled>Stop</button>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2 mb-3">
+            <div class="col-6 input-group-lg">
+                <label for="status" class="form-label">Status:</label>
+                <input id="status" class="form-control" type="text" placeholder="" disabled readonly value="-">
+            </div>
+            <div class="col-6 input-group-lg">
+                <label for="lastUpdated" class="form-label">Last Updated at:</label>
+                <input id="lastUpdated" class="form-control" type="text" placeholder="" disabled readonly value="-">
+            </div>
+        </div>
+    </div>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script> -->
+    <script type="text/javascript">
+        let beneficiaries = [];
+        window.addEventListener("message", (event) => {
+            if (!event.data.type || (event.data.type != "mainFrame")) return;
+
+            let command = event.data.message.command;
+            let data = event.data.message.data;
+
+            if (command == "beneficiaries") {
+                let str = '<option value="0" selected>All</option>';
+                data.forEach(element => {
+                    str += `<option value="${element.id}">${element.name}</option>`;
+                    beneficiaries.push(element.id);
+                });
+                document.getElementById("beneficiarySelect").innerHTML = str;
+            }
+            else if (command == "states") {
+                let str = '';
+                data.forEach(element => {
+                    str += `<option value="${element.state_id}">${element.state_name}</option>`;
+                });
+                document.getElementById("stateSelect").innerHTML = str;
+                /*window.parent.postMessage({
+                    type: "iframeOptions",
+                    message: {
+                        command: "districts",
+                        data: document.getElementById("stateSelect").value
+                    }
+                }, "*");*/
+            }
+            else if (command == "districts") {
+                let str = '';
+                data.forEach(element => {
+                    str += `<option value="${element.district_id}">${element.district_name}</option>`;
+                });
+                document.getElementById("districtSelect").innerHTML = str;
+            } else if (command == "startSuccess") {
+                document.getElementById('stateSelect').setAttribute("disabled", "");
+                document.getElementById('districtSelect').setAttribute("disabled", "");
+                document.getElementById('beneficiarySelect').setAttribute("disabled", "");
+                document.getElementById('ageSelect').setAttribute("disabled", "");
+                document.getElementById('doseSelect').setAttribute("disabled", "");
+                document.getElementById('slotSelect').setAttribute("disabled", "");
+                document.getElementById('vaccineSelect').setAttribute("disabled", "");
+                document.getElementById('paymentSelect').setAttribute("disabled", "");
+                document.getElementById('captchaInput').setAttribute("disabled", "");
+                document.getElementById('rangeDuration').setAttribute("disabled", "");
+                document.getElementById('startButton').setAttribute("disabled", "");
+                document.getElementById('stopButton').removeAttribute("disabled", "");
+            }
+            else if (command == "stopSuccess") {
+                document.getElementById('stateSelect').removeAttribute("disabled", "");
+                document.getElementById('districtSelect').removeAttribute("disabled", "");
+                document.getElementById('beneficiarySelect').removeAttribute("disabled", "");
+                document.getElementById('ageSelect').removeAttribute("disabled", "");
+                document.getElementById('doseSelect').removeAttribute("disabled", "");
+                document.getElementById('slotSelect').removeAttribute("disabled", "");
+                document.getElementById('vaccineSelect').removeAttribute("disabled", "");
+                document.getElementById('paymentSelect').removeAttribute("disabled", "");
+                document.getElementById('captchaInput').removeAttribute("disabled", "");
+                document.getElementById('rangeDuration').removeAttribute("disabled", "");
+                document.getElementById('startButton').removeAttribute("disabled", "");
+                document.getElementById('stopButton').setAttribute("disabled", "");
+            }
+            else if (command == "update") {
+                document.getElementById('status').value = data.status;
+                document.getElementById('lastUpdated').value = data.lastUpdated;
+            }
+            else if (command == "errorMessage") {
+                if (data) {
+                    document.getElementById('autherr').classList.remove('d-none');
+                    document.getElementById('mainArea').classList.add('d-none');
+                }
+                else {
+                    document.getElementById('autherr').classList.add('d-none');
+                    document.getElementById('mainArea').classList.remove('d-none');
+                }
+            }
+            else if (command == "captcha") {
+                document.getElementById('captchaImage').setAttribute("src", data);
+            }
+            else if (command == "setData") {
+                document.getElementById('stateSelect').value = data.state;
+                document.getElementById('districtSelect').value = data.district;
+                document.getElementById('beneficiarySelect').value = data.beneficiary;
+                document.getElementById('ageSelect').value = data.age;
+                document.getElementById('doseSelect').value = data.dose;
+                document.getElementById('slotSelect').value = data.slot;
+                document.getElementById('paymentSelect').value = data.feeType;
+                document.getElementById('vaccineSelect').value = data.vaccineName;
+                document.getElementById('rangeDuration').value = data.frequency;
+            }
+            else if (command == "focusCaptcha") {
+                document.getElementById('captchaInput').focus();
+            }
+
+        }, false);
+
+        let stateSelect = document.getElementById('stateSelect');
+        stateSelect.addEventListener('change', function () {
+            window.parent.postMessage({
+                type: "iframeOptions",
+                message: {
+                    command: "districts",
+                    data: this.value
+                }
+            }, "*");
+        });
+
+        let startButton = document.getElementById('startButton');
+        startButton.addEventListener('click', function () {
+            let message = {
+                state: parseInt(document.getElementById('stateSelect').value),
+                district: parseInt(document.getElementById('districtSelect').value),
+                beneficiary: document.getElementById('beneficiarySelect').value == "0" ? beneficiaries : [document.getElementById('beneficiarySelect').value],
+                age: parseInt(document.getElementById('ageSelect').value),
+                dose: parseInt(document.getElementById('doseSelect').value),
+                slot: parseInt(document.getElementById('slotSelect').value),
+                feeType: document.getElementById('paymentSelect').value,
+                vaccineName: document.getElementById('vaccineSelect').value,
+                frequency: parseInt(document.getElementById('rangeDuration').value),
+                captcha: document.getElementById('captchaInput').value
+            }
+
+            window.parent.postMessage({
+                type: "iframeOptions",
+                message: {
+                    command: "start",
+                    data: message
+                }
+            }, "*");
+        });
+
+        let stopButton = document.getElementById('stopButton');
+        stopButton.addEventListener('click', function () {
+            window.parent.postMessage({
+                type: "iframeOptions",
+                message: {
+                    command: "stop",
+                    data: ""
+                }
+            }, "*");
+        });
+
+        window.parent.postMessage({
+            type: "iframeOptions",
+            message: {
+                command: "loaded",
+                data: ""
+            }
+        }, "*");
+    </script>
+</body>
+
+</html>

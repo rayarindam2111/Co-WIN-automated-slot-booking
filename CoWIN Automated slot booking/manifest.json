@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "Co-WIN automated slot booking",
+  "author": "Arindam Ray",
+  "version": "0.0.1",
+  "description": "This extension helps you automatically book slots for vaccination whenever they become available.",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://selfregistration.cowin.gov.in/*"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "js": [
+        "cowin.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    "modal.html"
+  ],
+  "permissions": [
+    "activeTab"
+  ],
+  "icons": {
+    "48": "icon.png"
+  }
+}
