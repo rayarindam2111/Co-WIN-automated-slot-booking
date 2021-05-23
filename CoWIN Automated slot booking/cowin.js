@@ -1,8 +1,14 @@
-let api_head = "https://cdn-api.co-vin.in/api/v2";
-let user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36";
-let tokenString = "";
-let OTPText = "";
-let phoneNumber = "";
+var api_head = "https://cdn-api.co-vin.in/api/v2";
+var user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36";
+var tokenString = "";
+var OTPText = "";
+var phoneNumber = "";
+
+var windowIframe = null;
+var bookingTimer = null;
+var working = false;
+var warningSound = null;
+var oldBooking = false;
 
 class sound {
   constructor(src, loop = false) {
@@ -28,7 +34,7 @@ class sound {
   }
 }
 
-let digestMessage = async function (message) {
+var digestMessage = async function (message) {
   const msgUint8 = new TextEncoder().encode(message);
   const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -36,7 +42,7 @@ let digestMessage = async function (message) {
   return hashHex;
 }
 
-let dateStr = function (dateVal) {
+var dateStr = function (dateVal) {
   let date = new Date(dateVal);
 
   let day = String(date.getDate()).padStart(2, '0');
@@ -46,7 +52,7 @@ let dateStr = function (dateVal) {
   return `${day}-${month}-${year}`;
 }
 
-let generateOTP = async function () {
+var generateOTP = async function () {
   try {
     let secret = "U2FsdGVkX1//EanSfJMhknl5j8wJ6JEXg02R1uJDck53GNKTIfqk8tH4F4kfgcVyiODyWGMmxyGu/bHZrjg6AQ==";
 
@@ -74,7 +80,7 @@ let generateOTP = async function () {
   }
 }
 
-let confirmOTP = async function (OTP) {
+var confirmOTP = async function (OTP) {
   try {
     let otpSHA = await digestMessage(OTP);
 
@@ -102,7 +108,7 @@ let confirmOTP = async function (OTP) {
   }
 }
 
-let stateList = async function () {
+var stateList = async function () {
   try {
     let fetchData = await fetch(`${api_head}/admin/location/states`, {
       "headers": {
@@ -124,7 +130,7 @@ let stateList = async function () {
   }
 }
 
-let districtList = async function (stateID) {
+var districtList = async function (stateID) {
   try {
     let fetchData = await fetch(`${api_head}/admin/location/districts/${stateID}`, {
       "headers": {
@@ -146,7 +152,7 @@ let districtList = async function (stateID) {
   }
 }
 
-let beneficiaryList = async function () {
+var beneficiaryList = async function () {
   try {
     let fetchData = await fetch(`${api_head}/appointment/beneficiaries`, {
       "headers": {
@@ -173,7 +179,7 @@ let beneficiaryList = async function () {
   }
 }
 
-let errorsFound = async function () {
+var errorsFound = async function () {
   try {
     let fetchData = await fetch(`${api_head}/appointment/beneficiaries`, {
       "headers": {
@@ -200,7 +206,7 @@ let errorsFound = async function () {
 
 }
 
-let calendarList = async function (districtID, dateString) {
+var calendarList = async function (districtID, dateString) {
   try {
     let fetchData = await fetch(`${api_head}/appointment/sessions/calendarByDistrict?district_id=${districtID}&date=${dateStr(dateString)}`, {
       "headers": {
@@ -221,7 +227,7 @@ let calendarList = async function (districtID, dateString) {
   }
 }
 
-let getCaptcha = async function () {
+var getCaptcha = async function () {
   try {
     let fetchData = await fetch(`${api_head}/auth/getRecaptcha`, {
       "headers": {
@@ -243,7 +249,7 @@ let getCaptcha = async function () {
   }
 }
 
-let bookSlot = async function (sessionID, centerID, beneficiaries, dose, vaccineSlot, captcha) {
+var bookSlot = async function (sessionID, centerID, beneficiaries, dose, vaccineSlot, captcha) {
   try {
     let packData = {
       "center_id": centerID,
@@ -276,7 +282,7 @@ let bookSlot = async function (sessionID, centerID, beneficiaries, dose, vaccine
   }
 }
 
-let retryBook = async function (distID, dateStr, beneficiaries, minAge, dose, vaccineSlot, feeType, vaccineName, captcha, oldBooking) {
+var retryBook = async function (distID, dateStr, beneficiaries, minAge, dose, vaccineSlot, feeType, vaccineName, captcha, oldBooking) {
   if (oldBooking) {
     let slotsToTry = sessionStorage.getItem("availableSlots") && JSON.parse(sessionStorage.getItem("availableSlots"));
 
@@ -352,7 +358,7 @@ let retryBook = async function (distID, dateStr, beneficiaries, minAge, dose, va
   return booked;
 }
 
-let main = async function (district, beneficiary, age, dose, slot, feeType, vaccineName, frequency, captcha, oldBooking) {
+var main = async function (district, beneficiary, age, dose, slot, feeType, vaccineName, frequency, captcha, oldBooking) {
   // let txnID = await generateOTP();
   // tokenString = await confirmOTP(OTPText);
   let today = Date.now();
@@ -401,13 +407,18 @@ let main = async function (district, beneficiary, age, dose, slot, feeType, vacc
   }
 }
 
-let setupDOM = async function () {
+var setupDOM = async function () {
   let htmlData = await fetch(chrome.runtime.getURL('/modal.html'));
   let htmlText = await htmlData.text();
 
   let modalText =
     `<iframe src="https://s3-eu-west-1.amazonaws.com/omegasquadron.neilbryson.net/silence.mp3" allow="autoplay" id="audio" style="display: none">
     </iframe>
+    <div id="leftNotif" class="hideModal">
+      <h3><em>Slot available</em></h3>
+      <hr>
+      <h7>Please login to book your slot!</h7>
+    </div>
     <div id="modalContainer" class="hideModal">
       <div class="modalBox">
           <div id="minimizeModal" class="closeButton">
@@ -425,7 +436,7 @@ let setupDOM = async function () {
   document.getElementById("optionsFrame").contentDocument.write(htmlText);
 }
 
-let init = async function () {
+var init = async function () {
   warningSound = new sound('https://codeskulptor-demos.commondatastorage.googleapis.com/descent/gotitem.mp3', true);
   await setupDOM();
 
@@ -481,6 +492,7 @@ let init = async function () {
 
   working = (sessionStorage.getItem("working") && parseInt(sessionStorage.getItem("working"))) ? true : false;
   if (working) {
+    document.getElementById('leftNotif').classList.remove('hideModal');
     warningSound.play();
     let loadedData = loadSettings();
 
@@ -522,6 +534,7 @@ let init = async function () {
       }
     }, "*");
 
+    document.getElementById('leftNotif').classList.add('hideModal');
     document.getElementById('modalContainer').classList.remove('hideModal');
     warningSound.stop();
 
@@ -548,7 +561,7 @@ let init = async function () {
 
 }
 
-let showError = function () {
+var showError = function () {
   windowIframe.postMessage({
     type: "mainFrame",
     message: {
@@ -558,7 +571,7 @@ let showError = function () {
   }, "*");
 }
 
-let requestCaptcha = async function () {
+var requestCaptcha = async function () {
   let captchaData = await getCaptcha();
   let imgString = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(captchaData.captcha)))}`;
   windowIframe.postMessage({
@@ -570,7 +583,7 @@ let requestCaptcha = async function () {
   }, "*");
 }
 
-let storeSettings = function (data) {
+var storeSettings = function (data) {
   sessionStorage.setItem("state", data.state);
   sessionStorage.setItem("district", data.district);
   let bData = data.beneficiary.length > 1 ? "0" : data.beneficiary[0];
@@ -583,7 +596,7 @@ let storeSettings = function (data) {
   sessionStorage.setItem("frequency", data.frequency);
 }
 
-let loadSettings = function () {
+var loadSettings = function () {
   let data = {};
   data.state = sessionStorage.getItem("state");
   data.district = sessionStorage.getItem("district");
@@ -597,12 +610,12 @@ let loadSettings = function () {
   return data;
 }
 
-let setWorking = function (value) {
+var setWorking = function (value) {
   working = value;
   sessionStorage.setItem("working", value ? 1 : 0);
 }
 
-let timeout = function (time) {
+var timeout = function (time) {
   return new Promise(function (resolve, reject) {
     setTimeout(function () { resolve(time); }, time);
   });
@@ -650,12 +663,6 @@ window.addEventListener("message", async (event) => {
     }, "*");
   }
 }, false);
-
-let windowIframe = null;
-let bookingTimer = null;
-let working = false;
-let warningSound = null;
-let oldBooking = false;
 
 console.log("Extension script loaded.");
 init();

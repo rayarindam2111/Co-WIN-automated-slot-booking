@@ -188,7 +188,7 @@
     </div>
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script> -->
     <script type="text/javascript">
-        let beneficiaries = [];
+        var beneficiaries = [];
         window.addEventListener("message", (event) => {
             if (!event.data.type || (event.data.type != "mainFrame")) return;
 
@@ -285,7 +285,7 @@
 
         }, false);
 
-        let stateSelect = document.getElementById('stateSelect');
+        var stateSelect = document.getElementById('stateSelect');
         stateSelect.addEventListener('change', function () {
             window.parent.postMessage({
                 type: "iframeOptions",
@@ -296,7 +296,7 @@
             }, "*");
         });
 
-        let startButton = document.getElementById('startButton');
+        var startButton = document.getElementById('startButton');
         startButton.addEventListener('click', function () {
             let message = {
                 state: parseInt(document.getElementById('stateSelect').value),
@@ -320,7 +320,7 @@
             }, "*");
         });
 
-        let stopButton = document.getElementById('stopButton');
+        var stopButton = document.getElementById('stopButton');
         stopButton.addEventListener('click', function () {
             window.parent.postMessage({
                 type: "iframeOptions",
