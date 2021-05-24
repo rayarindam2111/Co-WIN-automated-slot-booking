@@ -27,10 +27,18 @@ class sound {
     document.body.appendChild(this.sound);
   }
   play() {
-    this.sound.play();
+    try {
+      this.sound.play();
+    } catch (err) {
+      console.log('Could not play sound!');
+    }
   }
   stop() {
-    this.sound.pause();
+    try {
+      this.sound.pause();
+    } catch (err) {
+      console.log('Could not pause sound!');
+    }
   }
 }
 
@@ -54,7 +62,7 @@ var dateStr = function (dateVal) {
 
 var generateOTP = async function () {
   try {
-    let secret = "U2FsdGVkX1//EanSfJMhknl5j8wJ6JEXg02R1uJDck53GNKTIfqk8tH4F4kfgcVyiODyWGMmxyGu/bHZrjg6AQ==";
+    let secret = "U2FsdGVkX19mD56KTNfQsZgXJMwOG7u/6tuj0Qvil1LEjx783oxHXGUTDWYm+XMYVGXPeu+a24sl5ndEKcLTUQ==";
 
     let fetchData = await fetch(`${api_head}/auth/public/generateOTP`,
       {
