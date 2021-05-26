@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "Co-WIN automated slot booking GMessage plugin",
+  "author": "Arindam Ray",
+  "version": "0.0.1",
+  "description": "This extension helps you communicate with Google Messages to sync OTPs automatically.",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://messages.google.com/*"
+      ],
+      "js": [
+        "gMessage.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": [
+    "activeTab"
+  ],
+  "icons": {
+    "48": "icon.png"
+  }
+}

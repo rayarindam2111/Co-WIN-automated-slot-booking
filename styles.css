@@ -1,0 +1,27 @@
+#loginForm {
+    height: 100vh;
+    width: 100vw;
+    background: #fff;
+    z-index: 200;
+}
+
+#loginForm>div {
+    width: 60%;
+    padding: 30px;
+    border: 1px solid #a4a6a9;
+    border-radius: 4px;
+}
+
+#phoneSpan, #MPINSpan {
+    width: 70px;
+}
+
+/*
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+*/
