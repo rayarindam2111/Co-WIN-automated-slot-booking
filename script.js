@@ -16,6 +16,12 @@ var waitingForOTP = false;
 const DEFAULT_STATEID = 1;
 const LOGIN_REFRESH_TOKEN = 12 * (60 * 1000);
 
+const timeout = function (time) {
+    return new Promise(function (resolve, reject) {
+        setTimeout(function () { resolve(time); }, time);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Loaded DOM.");
 
@@ -31,8 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 var loginAll = async () => {
     try {
-
-        UI.lockLogin('Logging in...');
+        UI.lockLogin('Login');
 
         phoneNumber = document.getElementById('phoneNumber').value;
         mPin = document.getElementById('MPIN').value;
@@ -43,16 +48,17 @@ var loginAll = async () => {
 
         await umangController.login(phoneNumber, mPin);
         gMessageWindow.postMessage({ type: "mainMessage", message: { command: "watchForOTP", data: "" } }, "*");
-        await cowinController.login(phoneNumber, otpController.waitForOTP());
+        await umangController.loginCowin(otpController.waitForOTP(), otpController);
         gMessageWindow.postMessage({ type: "mainMessage", message: { command: "stopWatchOTP", data: "" } }, "*");
-        umangController.setCowinToken(cowinController.getToken());
+        //umangController.setCowinToken(cowinController.getToken());
 
         console.log('Logged in.');
         UI.loginComplete();
+        loginTimer = setInterval(reLogin, LOGIN_REFRESH_TOKEN);
         loadValues();
     }
     catch (err) {
-        console.log('Error logging in.');
+        console.log('Error logging in.', err);
         UI.releaseLogin('Login');
     }
 };
@@ -111,10 +117,10 @@ var loadValues = async () => {
     let sList = await cowinController.getStateList();
     UI.performCommand('states', sList);
 
-    let dList = await cowinController.getDistrictList(DEFAULT_STATEID || state);
+    let dList = await cowinController.getDistrictList(data.state || DEFAULT_STATEID);
     UI.performCommand('districts', dList);
 
-    let bList = await cowinController.getBeneficiaryList();
+    let bList = await umangController.getBeneficiaryList();
     UI.performCommand('beneficiaries', bList);
 
     UI.performCommand('setData', data);
@@ -122,7 +128,7 @@ var loadValues = async () => {
 }
 
 var retryBook = async (dateStr, distID, beneficiaries, minAge, dose, vaccineSlot, feeType, vaccineName) => {
-    let calendarData = await cowinController.getCalendarList(distID, dateStr);
+    let calendarData = await umangController.getCalendarList(distID, dateStr);
     let booked = false;
 
     availableSlots = [];
@@ -161,7 +167,7 @@ var retryBook = async (dateStr, distID, beneficiaries, minAge, dose, vaccineSlot
 
             let responseBooking = await umangController.bookSlot(session_id, beneficiaries, dose, slotString);
             console.log('Booking response:', responseBooking);
-            if (responseBooking.appointment_id) {
+            if (responseBooking.appointment_confirmation_no) {
                 booked = true;
                 break;
             }
@@ -209,12 +215,11 @@ var main = async () => {
         return booked;
     }
 
-    booked = await tryFunc();
+    //booked = await tryFunc();
 
-    if (!booked) {
-        bookingTimer = setInterval(tryFunc, timerInterval);
-        loginTimer = setInterval(reLogin, LOGIN_REFRESH_TOKEN);
-    }
+    //if (!booked) {
+    bookingTimer = setInterval(tryFunc, timerInterval);
+    //}
 }
 
 var reLogin = async () => {
@@ -223,11 +228,25 @@ var reLogin = async () => {
 
     waitingForOTP = true;
 
-    await umangController.login(phoneNumber, mPin);
-    gMessageWindow.postMessage({ type: "mainMessage", message: { command: "watchForOTP", data: "" } }, "*");
-    await cowinController.login(phoneNumber, otpController.waitForOTP());
-    gMessageWindow.postMessage({ type: "mainMessage", message: { command: "stopWatchOTP", data: "" } }, "*");
-    umangController.setCowinToken(cowinController.getToken());
+    let errors = true;
+
+    while (errors) {
+        try {
+            console.log('Waiting for OTP.');
+            await umangController.login(phoneNumber, mPin);
+            gMessageWindow.postMessage({ type: "mainMessage", message: { command: "watchForOTP", data: "" } }, "*");
+            await umangController.loginCowin(otpController.waitForOTP(), otpController);
+            gMessageWindow.postMessage({ type: "mainMessage", message: { command: "stopWatchOTP", data: "" } }, "*");
+            //umangController.setCowinToken(cowinController.getToken());
+            errors = false;
+        }
+        catch (err) {
+            errors = true;
+            UI.toastMessage('Error in automatic relogin - Network Issue. Retrying.');
+            console.log('Retrying relogin.');
+            await timeout(500);
+        }
+    }
 
     waitingForOTP = false;
 }

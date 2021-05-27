@@ -2,13 +2,21 @@ const xhrReq = async function (method, url, data, header) {
 	let dat = null;
 	if (method == "POST") {
 		dat = await axios.post(url, data, { headers: header });
+		if (dat.data.rc && parseInt(dat.data.rc) >= 400) {
+			throw `Network Error: ${dat.data.rc}`;
+		}
 		return dat.data;
 	}
 	else if (method == "GET") {
 		dat = await axios.get(url, { headers: header });
+		if (dat.data.rc && parseInt(dat.data.rc) >= 400) {
+			throw `Network Error: ${dat.data.rc}`;
+		}
 		return dat.data;
 	}
 }
+
+const LOGIN_TIMEOUT = 40;
 
 class umangWorker {
 
@@ -25,6 +33,21 @@ class umangWorker {
 
 		this.beneficiaries = null;
 		this.aptData = null;
+		this.trkr = null;
+
+		this.txnIDCowin = null;
+		this.OTPCowin = null;
+		this.calendarData = null;
+	}
+
+	dateStr(dateVal) {
+		let date = new Date(dateVal);
+
+		let day = String(date.getDate()).padStart(2, '0');
+		let month = String(date.getMonth() + 1).padStart(2, '0');
+		let year = date.getFullYear();
+
+		return `${day}-${month}-${year}`;
 	}
 
 	generateTRKR() {
@@ -76,6 +99,121 @@ class umangWorker {
 
 		this.umangToken = fetchData.pd.tkn;
 		this.umangUID = fetchData.pd.generalpd.uid;
+
+		this.trkr = this.generateTRKR();
+	}
+
+	async generateOTPCowin() {
+		let fetchData = await xhrReq(
+			'POST',
+			`${this.apiHead}/depttapi/COWINApi/ws1/1.0/v2/generateOTP`,
+			{
+				/* begin random params: might not need all of these, not tested */
+				deptid: "355",
+				did: null,
+				formtrkr: "0",
+				lang: "en",
+				language: "en",
+				mode: "web",
+				pltfrm: "windows",
+				srvid: "1604",
+				subsid: "0",
+				subsid2: "0",
+				/* end random params: might not need all of these, not tested */
+
+				/* begin UMANG params */
+				tkn: this.umangToken,
+				trkr: this.trkr,
+				usrid: this.umangUID,
+				/* end UMANG params */
+
+				mobile: this.phoneNumber
+			},
+			this.getHeader('data')
+		);
+
+		this.txnIDCowin = fetchData.pd.txnId;
+	}
+
+	async confirmOTPCowin(OTP) {
+		this.OTPCowin = OTP;
+
+		let fetchData = await xhrReq(
+			'POST',
+			`${this.apiHead}/depttapi/COWINApi/ws1/1.0/v2/confirmOTP`,
+			{
+				/* begin random params: might not need all of these, not tested */
+				deptid: "355",
+				did: null,
+				formtrkr: "0",
+				lang: "en",
+				language: "en",
+				mode: "web",
+				pltfrm: "windows",
+				srvid: "1604",
+				subsid: "0",
+				subsid2: "0",
+				/* end random params: might not need all of these, not tested */
+
+				/* begin UMANG params */
+				tkn: this.umangToken,
+				trkr: this.trkr,
+				usrid: this.umangUID,
+				/* end UMANG params */
+
+				otp: this.OTPCowin,
+				txnId: this.txnIDCowin
+			},
+			this.getHeader('data')
+		);
+
+		this.cowinToken = fetchData.pd.token;
+	}
+
+	async loginCowin(waitForOTP, resolvePromise) {
+		await this.generateOTPCowin();
+		let timeOutOTP = setTimeout(() => { resolvePromise.receivedOTP('000000') }, LOGIN_TIMEOUT * 1000);
+		let OTP = await waitForOTP;
+		clearTimeout(timeOutOTP);
+		console.log('OTP received:', OTP);
+		await this.confirmOTPCowin(OTP);
+	}
+
+	async getCalendarList(districtID, dateString) {
+		let fetchData = await xhrReq(
+			'POST',
+			`${this.apiHead}/depttapi/COWINApi/ws1/1.0/v2/calendarByDistrict`,
+			{
+				/* begin random params: might not need all of these, not tested */
+				deptid: "355",
+				did: null,
+				formtrkr: "0",
+				lang: "en",
+				language: "en",
+				mode: "web",
+				pltfrm: "windows",
+				srvid: "1604",
+				subsid: "0",
+				subsid2: "0",
+				/* end random params: might not need all of these, not tested */
+
+				/* begin UMANG params */
+				tkn: this.umangToken,
+				trkr: this.trkr,
+				usrid: this.umangUID,
+				/* end UMANG params */
+
+				token: this.cowinToken,
+				date: this.dateStr(dateString),
+				district_id: districtID,
+				vaccine: ""
+			},
+			this.getHeader('data')
+		);
+
+		this.calendarData = fetchData.pd;
+
+		return this.calendarData;
 	}
 
 	async getBeneficiaryList() {
@@ -102,7 +240,7 @@ class umangWorker {
 
 				/* begin UMANG params */
 				tkn: this.umangToken,
-				trkr: this.generateTRKR(),
+				trkr: this.trkr,
 				usrid: this.umangUID,
 				/* end UMANG params */
 
@@ -147,7 +285,7 @@ class umangWorker {
 
 			/* begin UMANG params */
 			tkn: this.umangToken,
-			trkr: this.generateTRKR(),
+			trkr: this.trkr,
 			usrid: this.umangUID,
 			/* end UMANG params */
 
@@ -224,9 +362,11 @@ class cowinWorker {
 		return hashHex;
 	}
 
-	async login(phoneNumber, waitForOTP) {
+	async login(phoneNumber, waitForOTP, resolvePromise) {
 		await this.generateOTP(phoneNumber);
+		let timeOutOTP = setTimeout(() => { resolvePromise.receivedOTP('000000') }, LOGIN_TIMEOUT * 1000);
 		let OTP = await waitForOTP;
+		clearTimeout(timeOutOTP);
 		console.log('OTP received:', OTP);
 		await this.confirmOTP(OTP);
 	}
@@ -270,7 +410,7 @@ class cowinWorker {
 			'GET',
 			`${this.apiHead}/admin/location/states`,
 			{},
-			this.getHeader(true)
+			this.getHeader(false)
 		);
 
 		this.stateData = fetchData.states;
@@ -283,7 +423,7 @@ class cowinWorker {
 			'GET',
 			`${this.apiHead}/admin/location/districts/${stateID}`,
 			{},
-			this.getHeader(true)
+			this.getHeader(false)
 		);
 
 		this.districtData = fetchData.districts;
@@ -318,7 +458,7 @@ class cowinWorker {
 			'GET',
 			`${this.apiHead}/appointment/sessions/calendarByDistrict?district_id=${districtID}&date=${this.dateStr(dateString)}`,
 			{},
-			this.getHeader(true)
+			this.getHeader(false)
 		);
 
 		this.calendarData = fetchData;
