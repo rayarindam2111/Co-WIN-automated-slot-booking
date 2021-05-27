@@ -1,4 +1,4 @@
-let xhrReq = async function (method, url, data, header) {
+const xhrReq = async function (method, url, data, header) {
 	let dat = null;
 	if (method == "POST") {
 		dat = await axios.post(url, data, { headers: header });
@@ -78,7 +78,7 @@ class umangWorker {
 		this.umangUID = fetchData.pd.generalpd.uid;
 	}
 
-	async getBeneficiaries() {
+	async getBeneficiaryList() {
 		let fetchData = await xhrReq(
 			'POST',
 			`${this.apiHead}/depttapi/COWINApi/ws1/1.0/v2/beneficiaries`,
@@ -113,46 +113,59 @@ class umangWorker {
 			this.getHeader('data')
 		);
 
-		this.beneficiaries = fetchData.pd.beneficiaries
+		let bList = fetchData.pd;
+		let b_ids = [];
+
+		bList.beneficiaries.forEach(elem => {
+			if (elem.vaccination_status == "Not Vaccinated")
+				b_ids.push({ id: elem.beneficiary_reference_id, name: elem.name });
+		});
+
+		this.beneficiaries = b_ids;
+
 		return this.beneficiaries;
 	}
 
-	async scheduleAppointment(beneficiaryList, sessionID, slotTime) {
+	async bookSlot(sessionID, beneficiaries, doseNumber, slotTime) {
+		let packData = {
+			/* begin random params: might not need all of these, not tested */
+			deptid: "355",
+			did: null,
+			formtrkr: "0",
+			lac: "0",
+			lang: "en",
+			language: "en",
+			lat: "0",
+			lon: "0",
+			mode: "web",
+			pltfrm: "windows",
+			srvid: "1604",
+			subsid: "0",
+			subsid2: "0",
+			usag: "0",
+			/* end random params: might not need all of these, not tested */
+
+			/* begin UMANG params */
+			tkn: this.umangToken,
+			trkr: this.generateTRKR(),
+			usrid: this.umangUID,
+			/* end UMANG params */
+
+			/* begin Co-WIN params */
+			token: this.cowinToken,
+			beneficiaries: beneficiaries,
+			session_id: sessionID,
+			slot: slotTime,
+			dose: doseNumber
+			/* end Co-WIN params */
+		};
+
+		console.log("Data:", packData);
+
 		let fetchData = await xhrReq(
 			'POST',
 			`${this.apiHead}/depttapi/COWINApi/ws1/1.0/v2/scheduleappointment`,
-			{
-				/* begin random params: might not need all of these, not tested */
-				deptid: "355",
-				did: null,
-				dose: 1,
-				formtrkr: "0",
-				lac: "0",
-				lang: "en",
-				language: "en",
-				lat: "0",
-				lon: "0",
-				mode: "web",
-				pltfrm: "windows",
-				srvid: "1604",
-				subsid: "0",
-				subsid2: "0",
-				usag: "0",
-				/* end random params: might not need all of these, not tested */
-
-				/* begin UMANG params */
-				tkn: this.umangToken,
-				trkr: this.generateTRKR(),
-				usrid: this.umangUID,
-				/* end UMANG params */
-
-				/* begin Co-WIN params */
-				token: this.cowinToken,
-				beneficiaries: beneficiaryList,
-				session_id: sessionID,
-				slot: slotTime
-				/* end Co-WIN params */
-			},
+			packData,
 			this.getHeader('data')
 		);
 
@@ -252,7 +265,7 @@ class cowinWorker {
 		this.token = fetchData.token;
 	}
 
-	async stateList() {
+	async getStateList() {
 		let fetchData = await xhrReq(
 			'GET',
 			`${this.apiHead}/admin/location/states`,
@@ -265,7 +278,7 @@ class cowinWorker {
 		return this.stateData;
 	}
 
-	async districtList(stateID) {
+	async getDistrictList(stateID) {
 		let fetchData = await xhrReq(
 			'GET',
 			`${this.apiHead}/admin/location/districts/${stateID}`,
@@ -278,7 +291,7 @@ class cowinWorker {
 		return this.districtData;
 	}
 
-	async beneficiaryList() {
+	async getBeneficiaryList() {
 		let fetchData = await xhrReq(
 			'GET',
 			`${this.apiHead}/appointment/beneficiaries`,
@@ -299,7 +312,7 @@ class cowinWorker {
 		return this.beneficiaries;
 	}
 
-	async calendarList(districtID, dateString) {
+	async getCalendarList(districtID, dateString) {
 
 		let fetchData = await xhrReq(
 			'GET',
@@ -326,15 +339,15 @@ class cowinWorker {
 		return this.captcha;
 	}
 
-	async bookSlot(sessionID, centerID, beneficiaries, dose, vaccineSlot, captcha) {
+	async bookSlot(sessionID, centerID, beneficiaries, doseNumber, slotTime, captcha) {
 
 		let packData = {
 			"center_id": centerID,
 			"session_id": sessionID,
 			"beneficiaries": beneficiaries,
-			"slot": vaccineSlot,
+			"slot": slotTime,
 			"captcha": captcha,
-			"dose": dose
+			"dose": doseNumber
 		};
 		console.log("Data:", packData);
 

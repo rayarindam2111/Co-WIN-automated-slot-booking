@@ -16,6 +16,37 @@
     width: 70px;
 }
 
+red {
+    color: #f00;
+}
+
+#mainArea {
+    min-height: 100vh;
+}
+
+p.h2>img {
+    margin-top: -10px;
+}
+
+#autherr {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    z-index: 10;
+}
+
+#captchaImage {
+    height: 70px;
+    width: auto;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    float: right;
+}
+
 /*
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     -webkit-appearance: none;
