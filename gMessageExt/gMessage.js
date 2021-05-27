@@ -1,6 +1,19 @@
 console.log('Extension loaded.');
 
-const signalIcon = '<div id="msgStatus" style="position:absolute;top:24px;right:12px;width:20px;height:20px;background:#f00;z-index:999999;border-radius:50%"></div>';
+const signalIcon = `<div id="msgStatus" style="
+                      position: absolute;
+                      top: 20px;
+                      right: 12px;
+                      width: 25px;
+                      height: 25px;
+                      background-color: #f00;
+                      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAsFQTFRFAAAAZWYPEA8DZmkPDxADCwoCZ2kPHB0FAAAAbm8QJSUFHx8FGxwEWFsNDA0CCgoBGhsFCQgBHyAEU1YNDQ0CICAEHx8FU1UNJSUGAgMAFBUDDw8CFBMDCAcBCwsCAQEAIyIGQUIJFhYDERIDBwcBJCUFEhIDQ0QKJCUFExQDBgcBLzAHMzQITE0MNzgIOjoJDg4CCgoBHyAFGhsECAgAKSkFEBEDCgkBKywHMzQIFRUCW10NKioGIiIGEhIDCgkBKisHMzMICgkBCgoBHR0EFBQCDg8DKioHEhIDCAgBKSkHMjMHCQkBJycHODkHLC0GDg4CDQwCDQ0BVFUNIyMFAwMBEBADBgYBMDEIMTIHCwoBBwcBHRwEHyAEDQwDUlUMFRYDEA8DUFAMLS4GERIDNDYIKysHCwsBHBwELzAHQ0UKHh4EEBADVVYNGBkDDg4DU1UMDhACNjcIKywHCAgBLC0GEA8DVlUNFRYDExIDUVIMEREDNTQIKysHCAgBISEFHB0EQEEJHh4EDw8DVlcNGRkEERIDVFUMExQDAwQBNzYIOjsIFxYEJicGXl8PISIGCgsBVlYMLCsHBQUBNTYIOTsIBQQBJygGBwgBYWIOJCUFXV8PISIECQoBVVUMERECGBgEAwMAGRkEISAFXF0PHR0ECgsBVFYMOzsJFxcEQ0MKAgIBHh4FJSUGCAgBXl0PICEEXV8OQ0QKREQJBgUALC4GQkIJCwoBZ2kQGhsEVVYOQEEJICEFSEkLIiIFNDUHWFoNFRUDCwwBYWMPZWcQGRoEEhICISEFP0AKBAUBHR0EFxcDEREDXmANCQkBFBQDNjYIJCUFODkIAAAAY2QPXV4OBgYBICAFPD0JBwYBISIFNzcHRkcKDAwBBgYBDg0CEBECDw4CEBACKioHIyUGDw8CDhACQEIJDw8CEBADEBADKZHkggAAAOt0Uk5TABr/CH7/CDL/A4QmNzJ+/4X/HTbAlyQ3gf+O/0r/t/8zBm1L/1ZyOYFM/1ZiMGkNQvptdv8ZQvpsUsESdh1W+WxR9NKirvUeVf9rUftaIV4JuvkRfv9V/05T+PJqruYaufwTOFVNZ/BUJy+s7DfA+xNVTWf6Luw2v98VVU9m/kBXMKrsOL7eEjP/ZkO7kTmn9hog/2pC/2fPBpM4p/cYhcb/dLQ4p/cYK0lk/zCx/DinGChH/01j+RqpGBJlQkY0E831GAnR72ND/0/M7RnQ6FljOvYEF/RVK/+NSBTr/fyQ36pPXt+yF+CRnvz0kIEAAAGMSURBVHicY2DABRiZmHHKQQALKxt+BewcOFRwcnGDKB4OXj5+7CoEBIVA8sIMDCKC2FWIcogxcIgzMEhISkljk5eRlZNXANISHIoMSljklVVUGdQ41Bk0gPLYgKaWNpDU4dDV08cqb2BoBKaNTUyxypuZW1haWYNYNhy2WOTt7B0cnZxdQExXNxV3DHkPTy9vH18GP/8AhsCg4JBQdPmw8IjIqOgYhti4+ITEJAaGZDT5FJXUtPSMzKzsnNy8/AJM+wu1iopVSkoZssvKKyqrMOWrVWpq6+obGpuaW1rb2jHlOzq7ujl6GBh6Vfr6J0zElJ80ecrUadNnzJylMnvO3HlYAmD+AoaFixgYFqssWbpsORZ5hhXhK1etXrN23foNyzZik2fYtHnL1m2rt+/YuWwXVvndHHv2Lty3/8DBQ4exyh85ekzw+ImTp06fOYtVnuHceYYLHBcvXZ5xBbv81WvXb9y8dRu7JAjcuXvv/gPc0gy7Hz56/ASf/NNneGQJyz9/gV+e4eUr/PIASEp2QBmfKbkAAAAASUVORK5CYII=);
+                      background-size: 60%;
+                      z-index: 999999;
+                      border-radius: 50%;
+                      background-position: center;
+                      background-repeat: no-repeat;">
+                    </div>`;
 document.body.insertAdjacentHTML("beforeend", signalIcon);
 
 var mainWindow = window.opener;
@@ -90,7 +103,7 @@ const init = async () => {
 
   });
 
-  document.getElementById('msgStatus').style.background = '#0f0';
+  document.getElementById('msgStatus').style.backgroundColor = '#0f0';
 }
 
 init();
