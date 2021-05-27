@@ -1,0 +1,22 @@
+{
+  "name": "automated-vaccine-slot-booking",
+  "version": "0.0.1",
+  "description": "Helps you automtically book vaccine slots.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rayarindam2111/Co-WIN-automated-slot-booking.git"
+  },
+  "author": "Arindam Ray",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rayarindam2111/Co-WIN-automated-slot-booking/issues"
+  },
+  "homepage": "https://github.com/rayarindam2111/Co-WIN-automated-slot-booking#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
