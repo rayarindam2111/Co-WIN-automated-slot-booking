@@ -2,7 +2,7 @@
 # ![icon](https://user-images.githubusercontent.com/37744870/120004844-dd42cc80-bff4-11eb-8a07-6c4da10d6a5d.png) Co-WIN automated slot booking
 ##### _Automatically book vaccine slots as and when they become available_
 
-This is a browser extension that aims to automatically book vaccine slots for registered beneficiaries on the [Co-WIN website](https://selfregistration.cowin.gov.in/) as per availability. Users need to have an account registered on [UMANG](https://web.umang.gov.in/web_new/register) with the same phone number that is registered with Co-WIN and enable the 4-digit MPIN login process. Options for vaccine registration are obtained beforehand and a booking is attempted once a slot becomes available. No manual intervention (OTP or captcha) from the user is needed (OTPs are generated automatically every 12 minutes).
+This application aims to automatically book vaccine slots for registered beneficiaries on the [Co-WIN website](https://selfregistration.cowin.gov.in/) as per availability. Users need to have an account registered on [UMANG](https://web.umang.gov.in/web_new/register) with the same phone number that is registered with Co-WIN and enable the 4-digit MPIN login process. Options for vaccine registration are obtained beforehand and a booking is attempted once a slot becomes available. No manual intervention (OTP or captcha) from the user is needed (OTPs are generated automatically every 12 minutes).
 
 ## Setup
 > The setup procedure is demonstrated for Google Chrome.
