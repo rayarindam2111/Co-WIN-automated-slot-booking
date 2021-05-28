@@ -1,48 +1,49 @@
-# ![icon](https://user-images.githubusercontent.com/37744870/119220867-3056e400-bb0a-11eb-876e-37cf937ae02d.png) Co-WIN automated slot booking
-##### _Automatically book vaccine slots on Co-WIN as and when they become available_
 
-This is a browser extension that aims to automatically book vaccine slots for registered beneficiaries on the [Co-WIN website](https://selfregistration.cowin.gov.in/) as per availability. Options for registration are obtained beforehand and a booking is attempted once a slot becomes available. Co-WIN uses Bearer tokens for authentication that automatically expire after 15 minutes. If a slot becomes available after a user is automatically logged out, an audio alert is sent out and the booking is continued after successful login.
+# ![icon](https://user-images.githubusercontent.com/37744870/120004844-dd42cc80-bff4-11eb-8a07-6c4da10d6a5d.png) Co-WIN automated slot booking
+##### _Automatically book vaccine slots as and when they become available_
+
+This is a browser extension that aims to automatically book vaccine slots for registered beneficiaries on the [Co-WIN website](https://selfregistration.cowin.gov.in/) as per availability. Users need to have an account registered on [UMANG](https://web.umang.gov.in/web_new/register) with the same phone number that is registered with Co-WIN and enable the 4-digit MPIN login process. Options for vaccine registration are obtained beforehand and a booking is attempted once a slot becomes available. No manual intervention (OTP or captcha) from the user is needed (OTPs are generated automatically every 12 minutes).
 
 ## Setup
-
-> This is dev version of the extension and needs to be set up manually; porting to the extension store is a work in progress.
-
 > The setup procedure is demonstrated for Google Chrome.
 > A similar procedure should be followed for other webkit browsers as well.
 
- - Download the repository as a zipped file from [GitHub](https://github.com/rayarindam2111/Co-WIN-automated-slot-booking/) and extract the files in a directory. The location of this directory cannot change once it has been set up.
- 
- ![1](https://user-images.githubusercontent.com/37744870/119220364-d2c19800-bb07-11eb-8d96-92a2df34b802.png)
+Users should manually login to the Co-Win website at least once so that one OTP from the same is stored on their phone.  The application automatically sends out further requests for OTPs every 12 minutes. To automatically capture the OTPs received on the phone in the browser, Google Messages is used along with a browser extension. 
 
- - Open Google Chrome. Navigate to **More Tools > Extensions**.
+ 1. Make sure [Google Messages](https://play.google.com/store/apps/details?id=com.google.android.apps.messaging) is installed and selected as the default SMS app on your phone.
  
+ 2. Visit [Google Messages Web](https://messages.google.com/web/) on your browser and login by scanning the QR code from your phone. Make sure you select **Remember this computer** while logging in. This will ensure you are kept logged in for subsequent sessions. Close the tab once you have been logged in.
+ ![1](https://user-images.githubusercontent.com/37744870/120005519-87225900-bff5-11eb-9c99-9ea069db2f9f.png)
+ 
+ 3. Download the file [Google Messages vaccine extension](https://github.com/rayarindam2111/Co-WIN-automated-slot-booking/raw/UMANG/Google-Message-Extension/Google-Message-Extension.zip) and extract it in a directory. The location of this directory cannot change once it has been set up.
+ > This is dev version of the extension and needs to be set up manually; porting to the extension store is a work in progress.
+ 
+ 4. Open Google Chrome. Navigate to  **More Tools > Extensions**.
  ![2](https://user-images.githubusercontent.com/37744870/119220367-d48b5b80-bb07-11eb-8d95-86847a783b77.png)
-
- - Click on **Developer Mode**.
  
+ 5. Click on  **Developer Mode**.
  ![3](https://user-images.githubusercontent.com/37744870/119220369-d523f200-bb07-11eb-8752-90c67b2b15c3.png)
-
- - Click on **Load Unpacked**.
  
+ 6. Click on  **Load Unpacked**.
  ![4](https://user-images.githubusercontent.com/37744870/119220370-d5bc8880-bb07-11eb-8e46-5cec5d5a654b.png)
-
- - Browse to the directory where you extracted the files and click on **Select Folder**. Make sure you go inside the **CoWIN Automated slot booking** directory.
  
- ![5](https://user-images.githubusercontent.com/37744870/119220373-d6551f00-bb07-11eb-9e15-d55365eacb7d.png)
-
- - The extension should show up on the Extensions page.
+ 7. Browse to the directory where you extracted the files and click on  **Select Folder**. Make sure you go inside the  **Google-Message-Extension**  directory.
+ ![5](https://user-images.githubusercontent.com/37744870/120007682-cc478a80-bff7-11eb-81b1-26a0a1662102.png)
  
- ![6](https://user-images.githubusercontent.com/37744870/119220374-d6edb580-bb07-11eb-8137-65159b19c301.png)
-
- - Visit [https://selfregistration.cowin.gov.in/](https://selfregistration.cowin.gov.in/) and login using your phone number and OTP. A yellow icon should appear on the bottom right corner.
+ 8. The extension should show up on the Extensions page.
+ ![6](https://user-images.githubusercontent.com/37744870/120007689-cd78b780-bff7-11eb-91d1-bb0f2d2fc3be.png)
  
- ![7](https://user-images.githubusercontent.com/37744870/119220375-d7864c00-bb07-11eb-892a-be0c9b21b99b.png)
-
- - Once you have logged in, click on the icon to open the options page. Make sure you fill in all the options correctly and then click on Start to start the automatic vaccine registration process.
+ 9. Visit [autoslot.herokuapp.com](https://autoslot.herokuapp.com/) and click on **Connect to Google Messages**.
+ ![7](https://user-images.githubusercontent.com/37744870/120007690-ce114e00-bff7-11eb-94c1-06cadcd9200a.png)
  
- ![8](https://user-images.githubusercontent.com/37744870/119220376-d81ee280-bb07-11eb-9b0b-2268e764a227.png)
-
- - If you get automatically logged out and a slot becomes available, the page sends out an audio alert and prompts you to re-login. Thereafter, the vaccine booking process is completed with the already provided options after re-login.
+ 10. A new tab opens up and the login SMS sender is automatically selected after some time.  Wait until the indicator on the top right of the screen turns **green**. Do not manually click anywhere on the window, navigate to a different conversation or close this tab.
+ ![8](https://user-images.githubusercontent.com/37744870/120007692-cea9e480-bff7-11eb-9736-a2e27bb04fb0.png)
+ 
+ 11. Go back to the Automated vaccine slot booking page and login using your UMANG phone number and MPIN.
+ ![9](https://user-images.githubusercontent.com/37744870/120007696-cf427b00-bff7-11eb-9cb0-0350cc01a8a8.png)
+ 
+ 12. Select your vaccine preferences and click on Start. A vaccine booking will be automatically made once a slot becomes available.
+ ![10](https://user-images.githubusercontent.com/37744870/120007699-cfdb1180-bff7-11eb-88a7-2d7f243e2b1c.png)
 
 ## License
 GNU General Public License v3.0
