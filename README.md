@@ -13,37 +13,47 @@ Users should manually login to the Co-Win website at least once so that one OTP 
  1. Make sure [Google Messages](https://play.google.com/store/apps/details?id=com.google.android.apps.messaging) is installed and selected as the default SMS app on your phone.
  
  2. Visit [Google Messages Web](https://messages.google.com/web/) on your browser and login by scanning the QR code from your phone. Make sure you select **Remember this computer** while logging in. This will ensure you are kept logged in for subsequent sessions. Close the tab once you have been logged in.
-![1](https://user-images.githubusercontent.com/37744870/120005519-87225900-bff5-11eb-9c99-9ea069db2f9f.png)
+
+ ![1](https://user-images.githubusercontent.com/37744870/120005519-87225900-bff5-11eb-9c99-9ea069db2f9f.png)
  
  3. Download the file [Google Messages vaccine extension](https://github.com/rayarindam2111/Co-WIN-automated-slot-booking/raw/UMANG/Google-Message-Extension/Google-Message-Extension.zip) and extract it in a directory. The location of this directory cannot change once it has been set up.
  > This is dev version of the extension and needs to be set up manually; porting to the extension store is a work in progress.
  
  4. Open Google Chrome. Navigate to  **More Tools > Extensions**.
-![2](https://user-images.githubusercontent.com/37744870/119220367-d48b5b80-bb07-11eb-8d95-86847a783b77.png)
+
+ ![2](https://user-images.githubusercontent.com/37744870/119220367-d48b5b80-bb07-11eb-8d95-86847a783b77.png)
  
  5. Click on  **Developer Mode**.
-![3](https://user-images.githubusercontent.com/37744870/119220369-d523f200-bb07-11eb-8752-90c67b2b15c3.png)
+ 
+ ![3](https://user-images.githubusercontent.com/37744870/119220369-d523f200-bb07-11eb-8752-90c67b2b15c3.png)
  
  6. Click on  **Load Unpacked**.
-![4](https://user-images.githubusercontent.com/37744870/119220370-d5bc8880-bb07-11eb-8e46-5cec5d5a654b.png)
+
+ ![4](https://user-images.githubusercontent.com/37744870/119220370-d5bc8880-bb07-11eb-8e46-5cec5d5a654b.png)
  
  7. Browse to the directory where you extracted the files and click on  **Select Folder**. Make sure you go inside the  **Google-Message-Extension**  directory.
-![5](https://user-images.githubusercontent.com/37744870/120007682-cc478a80-bff7-11eb-81b1-26a0a1662102.png)
+
+ ![5](https://user-images.githubusercontent.com/37744870/120007682-cc478a80-bff7-11eb-81b1-26a0a1662102.png)
  
  8. The extension should show up on the Extensions page.
-![6](https://user-images.githubusercontent.com/37744870/120007689-cd78b780-bff7-11eb-91d1-bb0f2d2fc3be.png)
+
+ ![6](https://user-images.githubusercontent.com/37744870/120007689-cd78b780-bff7-11eb-91d1-bb0f2d2fc3be.png)
  
  9. Visit [autoslot.herokuapp.com](https://autoslot.herokuapp.com/) and click on **Connect to Google Messages**.
-![7](https://user-images.githubusercontent.com/37744870/120007690-ce114e00-bff7-11eb-94c1-06cadcd9200a.png)
+
+ ![7](https://user-images.githubusercontent.com/37744870/120007690-ce114e00-bff7-11eb-94c1-06cadcd9200a.png)
  
  10. A new tab opens up and the login SMS sender is automatically selected after some time.  Wait until the indicator on the top right of the screen turns **green**. Do not manually click anywhere on the window, navigate to a different conversation or close this tab.
-![8](https://user-images.githubusercontent.com/37744870/120007692-cea9e480-bff7-11eb-9736-a2e27bb04fb0.png)
+
+ ![8](https://user-images.githubusercontent.com/37744870/120007692-cea9e480-bff7-11eb-9736-a2e27bb04fb0.png)
  
  11. Go back to the Automated vaccine slot booking page and login using your UMANG phone number and MPIN.
-![9](https://user-images.githubusercontent.com/37744870/120007696-cf427b00-bff7-11eb-9cb0-0350cc01a8a8.png)
+
+ ![9](https://user-images.githubusercontent.com/37744870/120007696-cf427b00-bff7-11eb-9cb0-0350cc01a8a8.png)
  
  12. Select your vaccine preferences and click on Start. A vaccine booking will be automatically made once a slot becomes available.
-![10](https://user-images.githubusercontent.com/37744870/120007699-cfdb1180-bff7-11eb-88a7-2d7f243e2b1c.png)
+ 
+ ![10](https://user-images.githubusercontent.com/37744870/120007699-cfdb1180-bff7-11eb-88a7-2d7f243e2b1c.png)
 
 ## License
 GNU General Public License v3.0
