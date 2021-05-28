@@ -1,3 +1,32 @@
+::-webkit-scrollbar {
+    background-color: #fff;
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #fff;
+}
+
+::-webkit-scrollbar-track:hover {
+    background-color: #f4f4f4;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #c5c5ca;
+    border-radius: 12px;
+    border: 3px solid #fff;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #a0a0a5;
+    border: 2px solid #f4f4f4;
+}
+
+::-webkit-scrollbar-button {
+    display: none;
+}
+
 #loginForm {
     height: 100vh;
     width: 100vw;

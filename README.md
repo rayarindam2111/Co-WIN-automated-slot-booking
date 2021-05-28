@@ -12,7 +12,7 @@ Users should manually login to the Co-Win website at least once so that one OTP 
 
  1. Make sure [Google Messages](https://play.google.com/store/apps/details?id=com.google.android.apps.messaging) is installed and selected as the default SMS app on your phone.
  
- 2. Visit [Google Messages Web](https://messages.google.com/web/) on your browser and login by scanning the QR code from your phone. Make sure you select **Remember this computer** while logging in. This will ensure you are kept logged in for subsequent sessions. Close the tab once you have been logged in.
+ 2. Visit [Google Messages Web](https://messages.google.com/web/) on your browser and login by scanning the QR code from your phone. Make sure you select **Remember this computer** while logging in. *On your phone, enable background sync for the Messages app. If configured for the first time, a user prompt asks if you want the app to keep running in the background - select **Yes** in that case. This will ensure that you are kept logged in for subsequent sessions.* Close the tab once you have been logged in.
 
  ![1](https://user-images.githubusercontent.com/37744870/120005519-87225900-bff5-11eb-9c99-9ea069db2f9f.png)
  
@@ -43,7 +43,7 @@ Users should manually login to the Co-Win website at least once so that one OTP 
 
  ![7](https://user-images.githubusercontent.com/37744870/120007690-ce114e00-bff7-11eb-94c1-06cadcd9200a.png)
  
- 10. A new tab opens up and the login SMS sender is automatically selected after some time.  Wait until the indicator on the top right of the screen turns **green**. Do not manually click anywhere on the window, navigate to a different conversation or close this tab.
+ 10. A new tab opens up and the login SMS sender is automatically selected after some time.  Wait until the indicator on the top right of the screen turns **green** and the conversation automatically switches to the Co-WIN OTP service **AX-NHPSMS**. *Do not manually click anywhere on the window, navigate to a different conversation or refresh/close this tab. Doing any of these would result in you failing to log in to the system.*
 
  ![8](https://user-images.githubusercontent.com/37744870/120007692-cea9e480-bff7-11eb-9736-a2e27bb04fb0.png)
  
