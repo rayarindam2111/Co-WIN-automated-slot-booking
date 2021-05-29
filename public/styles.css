@@ -28,7 +28,7 @@
 }
 
 #loginForm {
-    height: 100vh;
+    min-height: 100vh;
     width: 100vw;
     background: #fff;
     z-index: 200;
