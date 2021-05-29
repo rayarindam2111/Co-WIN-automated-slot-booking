@@ -38,6 +38,8 @@ class umangWorker {
 		this.txnIDCowin = null;
 		this.OTPCowin = null;
 		this.calendarData = null;
+
+		this.bookingSlotNow = false;
 	}
 
 	dateStr(dateVal) {
@@ -265,51 +267,62 @@ class umangWorker {
 	}
 
 	async bookSlot(sessionID, beneficiaries, doseNumber, slotTime) {
-		let packData = {
-			/* begin random params: might not need all of these, not tested */
-			deptid: "355",
-			did: null,
-			formtrkr: "0",
-			lac: "0",
-			lang: "en",
-			language: "en",
-			lat: "0",
-			lon: "0",
-			mode: "web",
-			pltfrm: "windows",
-			srvid: "1604",
-			subsid: "0",
-			subsid2: "0",
-			usag: "0",
-			/* end random params: might not need all of these, not tested */
+		if (this.bookingSlotNow)
+			return;
 
-			/* begin UMANG params */
-			tkn: this.umangToken,
-			trkr: this.trkr,
-			usrid: this.umangUID,
-			/* end UMANG params */
+		try {
+			this.bookingSlotNow = true;
 
-			/* begin Co-WIN params */
-			token: this.cowinToken,
-			beneficiaries: beneficiaries,
-			session_id: sessionID,
-			slot: slotTime,
-			dose: doseNumber
-			/* end Co-WIN params */
-		};
+			let packData = {
+				/* begin random params: might not need all of these, not tested */
+				deptid: "355",
+				did: null,
+				formtrkr: "0",
+				lac: "0",
+				lang: "en",
+				language: "en",
+				lat: "0",
+				lon: "0",
+				mode: "web",
+				pltfrm: "windows",
+				srvid: "1604",
+				subsid: "0",
+				subsid2: "0",
+				usag: "0",
+				/* end random params: might not need all of these, not tested */
 
-		console.log("Data:", packData);
+				/* begin UMANG params */
+				tkn: this.umangToken,
+				trkr: this.trkr,
+				usrid: this.umangUID,
+				/* end UMANG params */
 
-		let fetchData = await xhrReq(
-			'POST',
-			`${this.apiHead}/depttapi/COWINApi/ws1/1.0/v2/scheduleappointment`,
-			packData,
-			this.getHeader('data')
-		);
+				/* begin Co-WIN params */
+				token: this.cowinToken,
+				beneficiaries: beneficiaries,
+				session_id: sessionID,
+				slot: slotTime,
+				dose: doseNumber
+				/* end Co-WIN params */
+			};
 
-		this.aptData = fetchData.pd;
+			console.log("Data:", packData);
 
-		return this.aptData;
+			let fetchData = await xhrReq(
+				'POST',
+				`${this.apiHead}/depttapi/COWINApi/ws1/1.0/v2/scheduleappointment`,
+				packData,
+				this.getHeader('data')
+			);
+
+			this.aptData = fetchData.pd;
+
+			this.bookingSlotNow = false;
+
+			return this.aptData;
+		} catch (err) {
+			this.bookingSlotNow = false;
+		}
 	}
 }
 
