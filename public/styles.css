@@ -97,7 +97,6 @@ p.h2>img {
     margin-right: 8px;
 }
 
-/*
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
@@ -105,4 +104,3 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-*/
