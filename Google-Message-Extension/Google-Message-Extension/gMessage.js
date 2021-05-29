@@ -7,32 +7,6 @@ const init = async () => {
     });
   }
 
-  const callback = function (mutationsList, observer) {
-    if (!watchForOTP) return;
-
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'childList' && mutation.addedNodes[0] && mutation.addedNodes[0].nodeName.toUpperCase() == "MWS-MESSAGE-WRAPPER") {
-        let msgID = mutation.addedNodes[0].getAttribute('msg-id');
-        let lastMsg = mutation.addedNodes[0].getAttribute('is-last');
-        let textOTP = mutation.addedNodes[0].firstElementChild.innerText;
-        let OTP = textOTP.split('CoWIN is ')[1].split(".")[0];
-
-        if (lastMsg) {
-          console.log({ 'msgID': msgID, 'lastMsg': lastMsg, 'OTP': OTP });
-
-          mainWindow.postMessage({
-            type: "gMessage",
-            message: {
-              command: "OTP",
-              data: OTP
-            }
-          }, "*");
-        }
-
-      }
-    }
-  };
-
   window.addEventListener("beforeunload", function (event) {
     mainWindow.postMessage({
       type: "gMessage",
@@ -57,6 +31,12 @@ const init = async () => {
 
   console.log('Google Messages vaccine extension loaded.');
 
+  var watchForOTP = false;
+
+  var targetNode = null;
+  var textSender = null;
+  var loaded = false;
+
   const signalIcon = `<div id="msgStatus" style="
                       position: absolute;
                       top: 20px;
@@ -73,14 +53,54 @@ const init = async () => {
                     </div>`;
   document.body.insertAdjacentHTML("beforeend", signalIcon);
 
-  const observer = new MutationObserver(callback);
-  const config = { childList: true };
 
-  var watchForOTP = false;
+  const configNewMessage = { childList: true };
+  const observerNewMessage = new MutationObserver(function (mutationsList, observer) {
+    if (!watchForOTP) return;
 
-  var targetNode = null;
-  var textSender = null;
-  var loaded = false;
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'childList' && mutation.addedNodes[0] && mutation.addedNodes[0].nodeName.toUpperCase() == "MWS-MESSAGE-WRAPPER") {
+        let msgID = mutation.addedNodes[0].getAttribute('msg-id');
+        let lastMsg = mutation.addedNodes[0].getAttribute('is-last');
+        let textOTP = mutation.addedNodes[0].firstElementChild.innerText;
+        let OTP = textOTP.split('CoWIN is ')[1].split(".")[0];
+
+        if (lastMsg) {
+          console.log({ 'msgID': msgID, 'lastMsg': lastMsg, 'OTP': OTP });
+
+          mainWindow.postMessage({
+            type: "gMessage",
+            message: {
+              command: "OTP",
+              data: OTP
+            }
+          }, "*");
+        }
+
+      }
+    }
+  });
+
+  const configPageChange = { subtree: true, childList: true };
+  const observerPageChange = new MutationObserver(async function (mutations) {
+    for (const mutation of mutations) {
+      let removed = Array.from(mutation.removedNodes).some(parent => parent.contains(targetNode));
+      if (removed) {
+        observerPageChange.disconnect();
+        observerNewMessage.disconnect();
+
+        await waitForSelection();
+
+        observerNewMessage.observe(targetNode, configNewMessage);
+        observerPageChange.observe(document.body, configPageChange);
+
+        console.log('Started re-observing.');
+
+        break;
+      }
+    }
+  });
+
 
   let conversations = null;
   while (!conversations) {
@@ -120,7 +140,8 @@ const init = async () => {
 
   await waitForSelection();
 
-  observer.observe(targetNode, config);
+  observerNewMessage.observe(targetNode, configNewMessage);
+  observerPageChange.observe(document.body, configPageChange);
 
   window.addEventListener("message", (event) => {
     if (!event.data.type || (event.data.type != "mainMessage")) return;
