@@ -79,6 +79,14 @@ var addWindowListener = () => {
             console.log('OTP received!');
             otpController.receivedOTP(data);
         }
+        else if (command == 'gMessageWindowClosing') {
+            console.log('User tried to close Google Messages!');
+            UI.toastMessage('Please do not close the Google Messages tab!');
+        }
+        else if (command == 'gMessageWindowClosed') {
+            console.log('User closed Google Messages!');
+            UI.toastMessage('Connection to Google Messages lost. Please Refresh.');
+        }
     });
 }
 

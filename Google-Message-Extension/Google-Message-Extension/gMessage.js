@@ -1,6 +1,63 @@
-console.log('Extension loaded.');
+const mainWindow = window.opener;
 
-const signalIcon = `<div id="msgStatus" style="
+const init = async () => {
+  const timeout = function (time) {
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () { resolve(time); }, time);
+    });
+  }
+
+  const callback = function (mutationsList, observer) {
+    if (!watchForOTP) return;
+
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'childList' && mutation.addedNodes[0] && mutation.addedNodes[0].nodeName.toUpperCase() == "MWS-MESSAGE-WRAPPER") {
+        let msgID = mutation.addedNodes[0].getAttribute('msg-id');
+        let lastMsg = mutation.addedNodes[0].getAttribute('is-last');
+        let textOTP = mutation.addedNodes[0].firstElementChild.innerText;
+        let OTP = textOTP.split('CoWIN is ')[1].split(".")[0];
+
+        if (lastMsg) {
+          console.log({ 'msgID': msgID, 'lastMsg': lastMsg, 'OTP': OTP });
+
+          mainWindow.postMessage({
+            type: "gMessage",
+            message: {
+              command: "OTP",
+              data: OTP
+            }
+          }, "*");
+        }
+
+      }
+    }
+  };
+
+  window.addEventListener("beforeunload", function (event) {
+    mainWindow.postMessage({
+      type: "gMessage",
+      message: {
+        command: "gMessageWindowClosing",
+        data: ""
+      }
+    }, "*");
+    event.returnValue = "Do you really want to quit?";
+    event.preventDefault();
+  });
+
+  window.addEventListener("unload", function (event) {
+    mainWindow.postMessage({
+      type: "gMessage",
+      message: {
+        command: "gMessageWindowClosed",
+        data: ""
+      }
+    }, "*");
+  });
+
+  console.log('Google Messages vaccine extension loaded.');
+
+  const signalIcon = `<div id="msgStatus" style="
                       position: absolute;
                       top: 20px;
                       right: 12px;
@@ -14,75 +71,54 @@ const signalIcon = `<div id="msgStatus" style="
                       background-position: center;
                       background-repeat: no-repeat;">
                     </div>`;
-document.body.insertAdjacentHTML("beforeend", signalIcon);
+  document.body.insertAdjacentHTML("beforeend", signalIcon);
 
-var mainWindow = window.opener;
-var watchForOTP = false;
+  const observer = new MutationObserver(callback);
+  const config = { childList: true };
 
-const timeout = function (time) {
-  return new Promise(function (resolve, reject) {
-    setTimeout(function () { resolve(time); }, time);
-  });
-}
+  var watchForOTP = false;
 
-const callback = function (mutationsList, observer) {
+  var targetNode = null;
+  var textSender = null;
+  var loaded = false;
 
-  if (!watchForOTP) return;
-
-  for (const mutation of mutationsList) {
-    if (mutation.type === 'childList' && mutation.addedNodes[0] && mutation.addedNodes[0].nodeName.toUpperCase() == "MWS-MESSAGE-WRAPPER") {
-      let msgID = mutation.addedNodes[0].getAttribute('msg-id');
-      let lastMsg = mutation.addedNodes[0].getAttribute('is-last');
-      let textOTP = mutation.addedNodes[0].firstElementChild.innerText;
-      let OTP = textOTP.split('CoWIN is ')[1].split(".")[0];
-
-      if (lastMsg) {
-
-        console.log({ 'msgID': msgID, 'lastMsg': lastMsg, 'OTP': OTP });
-
-        mainWindow.postMessage({
-          type: "gMessage",
-          message: {
-            command: "OTP",
-            data: OTP
-          }
-        }, "*");
-      }
-
-
-    }
-  }
-};
-
-const observer = new MutationObserver(callback);
-const config = { childList: true };
-
-var targetNode = null;
-var textSender = null;
-var loaded = false;
-
-const init = async () => {
   let conversations = null;
   while (!conversations) {
-    conversations = document.querySelector("mws-conversations-list>nav>div")
+    conversations = document.querySelector("mws-conversations-list>nav>div");
     await timeout(100);
   }
 
   let conversationCount = conversations.childElementCount;
   for (let i = 0; i < conversationCount; i++) {
     let a = conversations.children[i].firstElementChild;
-    if (a.children[1].firstElementChild.innerText.toUpperCase() == 'AX-NHPSMS') {
+    if (a.children[1].firstElementChild.innerText.toUpperCase().endsWith('NHPSMS')) {
       a.click();
       break;
     }
   }
 
-  while (!(targetNode && textSender == 'AX-NHPSMS' && loaded)) {
-    targetNode = document.querySelector("mws-messages-list>mws-bottom-anchored>div>div>div.content");
-    textSender = document.querySelector("mws-header>div>div>h2.title") && document.querySelector("mws-header>div>div>h2.title").innerText.toUpperCase();
-    loaded = document.querySelector("mws-messages-list > mws-spinner") && document.querySelector("mws-messages-list > mws-spinner").classList.contains('hide');
-    await timeout(200);
+  document.querySelector("mws-conversations-list>nav>div").addEventListener('click', async function () {
+    await waitForSelection();
+  });
+
+  const waitForSelection = async function () {
+    targetNode = null;
+    textSender = null;
+    loaded = false;
+
+    document.getElementById('msgStatus').style.backgroundColor = '#f00';
+
+    while (!(targetNode && textSender.endsWith('NHPSMS') && loaded)) {
+      targetNode = document.querySelector("mws-messages-list>mws-bottom-anchored>div>div>div.content");
+      textSender = document.querySelector("mws-header>div>div>h2.title") && document.querySelector("mws-header>div>div>h2.title").innerText.toUpperCase();
+      loaded = document.querySelector("mws-messages-list > mws-spinner") && document.querySelector("mws-messages-list > mws-spinner").classList.contains('hide');
+      await timeout(200);
+    }
+
+    document.getElementById('msgStatus').style.backgroundColor = '#0f0';
   }
+
+  await waitForSelection();
 
   observer.observe(targetNode, config);
 
@@ -102,8 +138,6 @@ const init = async () => {
     }
 
   });
-
-  document.getElementById('msgStatus').style.backgroundColor = '#0f0';
 }
 
-init();
+mainWindow && init();
