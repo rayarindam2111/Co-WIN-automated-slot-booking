@@ -94,7 +94,7 @@ var respondToUI = async (command, data) => {
     if (command == 'updateValue') {
         bookingOptions = data;
         for (const [key, val] of Object.entries(data)) {
-            sessionStorage.setItem(key, val);
+            sessionStorage.setItem(key, JSON.stringify(val));
         }
     }
     else if (command == 'getDistricts') {
@@ -112,15 +112,15 @@ var respondToUI = async (command, data) => {
 
 var loadValues = async () => {
     let data = {};
-    data.state = sessionStorage.getItem("state");
-    data.district = sessionStorage.getItem("district");
-    data.beneficiary = sessionStorage.getItem("beneficiary");
-    data.age = sessionStorage.getItem("age");
-    data.dose = sessionStorage.getItem("dose");
-    data.slot = sessionStorage.getItem("slot");
-    data.feeType = sessionStorage.getItem("feeType");
-    data.vaccineName = sessionStorage.getItem("vaccineName");
-    data.frequency = sessionStorage.getItem("frequency");
+    data.state = JSON.parse(sessionStorage.getItem("state"));
+    data.district = JSON.parse(sessionStorage.getItem("district"));
+    data.beneficiary = JSON.parse(sessionStorage.getItem("beneficiary"));
+    data.age = JSON.parse(sessionStorage.getItem("age"));
+    data.dose = JSON.parse(sessionStorage.getItem("dose"));
+    data.slot = JSON.parse(sessionStorage.getItem("slot"));
+    data.feeType = JSON.parse(sessionStorage.getItem("feeType"));
+    data.vaccineName = JSON.parse(sessionStorage.getItem("vaccineName"));
+    data.frequency = JSON.parse(sessionStorage.getItem("frequency"));
 
     let sList = await cowinController.getStateList();
     UI.performCommand('states', sList);

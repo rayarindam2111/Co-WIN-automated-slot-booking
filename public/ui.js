@@ -2,29 +2,71 @@ class ui {
     constructor(optionsCallback) {
         this.toast = null;
         this.optionsCallback = optionsCallback;
-        this.beneficiaries = null;
+        this.beneficiaries = { id: [], name: [] };
+        this.beneficiaryModal = null;
+        this.selectedBeneficiaries = [];
+
         this.attachEventListeners();
     }
 
     attachEventListeners() {
-        var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-        var toastList = toastElList.map(function (toastEl) {
+        let toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        let toastList = toastElList.map(function (toastEl) {
             return new bootstrap.Toast(toastEl, { delay: 2000 });
         });
         this.toast = toastList[0];
 
-        var stateSelect = document.getElementById('stateSelect');
+        this.beneficiaryModal = new bootstrap.Modal(document.getElementById('beneficiaryModal'));
+
+        let stateSelect = document.getElementById('stateSelect');
 
         stateSelect.addEventListener('change', () => {
             this.optionsCallback('getDistricts', document.getElementById('stateSelect').value);
         });
 
-        var startButton = document.getElementById('startButton');
+        let beneficiarySelect = document.getElementById('beneficiarySelect');
+
+        beneficiarySelect.addEventListener('change', () => {
+            if (document.getElementById('beneficiarySelect').value == "custom") {
+                let str = '';
+                for (let i = 0; i < this.beneficiaries.id.length; i++) {
+                    str += `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="${this.beneficiaries.id[i]}" id="benCheck${i}" checked>
+                        <label class="form-check-label" for="benCheck${i}">${this.beneficiaries.name[i]}</label>
+                    </div>
+                    `;
+                }
+                document.getElementById('beneficiaryCheckboxes').innerHTML = str;
+                this.beneficiaryModal.show();
+            }
+        });
+
+        let beneficiaryModalOk = document.getElementById('beneficiaryModalOk');
+        beneficiaryModalOk.addEventListener('click', () => {
+            let checks = document.querySelectorAll('#beneficiaryCheckboxes>div.form-check>input.form-check-input');
+            this.selectedBeneficiaries = [];
+            for (let i = 0; i < checks.length; i++) {
+                if (checks[i].checked)
+                    this.selectedBeneficiaries.push(checks[i].value);
+            }
+            this.beneficiaryModal.hide();
+        });
+
+        let startButton = document.getElementById('startButton');
         startButton.addEventListener('click', () => {
+            let beneficiariestoSend = document.getElementById('beneficiarySelect').value;
+            if (beneficiariestoSend == "0")
+                beneficiariestoSend = this.beneficiaries.id;
+            else if (beneficiariestoSend == "custom")
+                beneficiariestoSend = this.selectedBeneficiaries;
+            else
+                beneficiariestoSend = [beneficiariestoSend];
+
             let message = {
                 state: parseInt(document.getElementById('stateSelect').value),
                 district: parseInt(document.getElementById('districtSelect').value),
-                beneficiary: document.getElementById('beneficiarySelect').value == "0" ? this.beneficiaries : [document.getElementById('beneficiarySelect').value],
+                beneficiary: beneficiariestoSend,
                 age: parseInt(document.getElementById('ageSelect').value),
                 dose: parseInt(document.getElementById('doseSelect').value),
                 slot: parseInt(document.getElementById('slotSelect').value),
@@ -39,7 +81,7 @@ class ui {
             this.performCommand('startSuccess');
         });
 
-        var stopButton = document.getElementById('stopButton');
+        let stopButton = document.getElementById('stopButton');
         stopButton.addEventListener('click', () => {
             this.optionsCallback('stop', '');
             this.performCommand('stopSuccess');
@@ -77,12 +119,14 @@ class ui {
 
     performCommand(command, data) {
         if (command == "beneficiaries") {
-            this.beneficiaries = [];
+            this.beneficiaries = { id: [], name: [] };
             let str = '<option value="0" selected>All</option>';
             data.forEach(element => {
                 str += `<option value="${element.id}">${element.name}</option>`;
-                this.beneficiaries.push(element.id);
+                this.beneficiaries.id.push(element.id);
+                this.beneficiaries.name.push(element.name);
             });
+            str += `<option value="custom">Custom</option>`;
             document.getElementById("beneficiarySelect").innerHTML = str;
         }
         else if (command == "states") {
@@ -149,9 +193,10 @@ class ui {
             document.getElementById('captchaInput').focus();
         }
         else if (command == "setData") {
+            let benValue = data.beneficiary && (data.beneficiary != -1) && ((data.beneficiary.length == 0 || data.beneficiary.length > 1) ? '0' : data.beneficiary[0]);
             data.state && (data.state != -1) && (document.getElementById('stateSelect').value = data.state);
             data.district && (data.district != -1) && (document.getElementById('districtSelect').value = data.district);
-            data.beneficiary && (data.beneficiary != -1) && (document.getElementById('beneficiarySelect').value = data.beneficiary);
+            data.beneficiary && (data.beneficiary != -1) && (document.getElementById('beneficiarySelect').value = benValue);
             data.age && (data.age != -1) && (document.getElementById('ageSelect').value = data.age);
             data.dose && (data.dose != -1) && (document.getElementById('doseSelect').value = data.dose);
             data.slot && (data.slot != -1) && (document.getElementById('slotSelect').value = data.slot);

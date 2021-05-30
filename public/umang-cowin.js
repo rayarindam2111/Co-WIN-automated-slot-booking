@@ -257,7 +257,7 @@ class umangWorker {
 		let b_ids = [];
 
 		bList.beneficiaries.forEach(elem => {
-			if (elem.vaccination_status == "Not Vaccinated")
+			if (elem.vaccination_status == "Not Vaccinated" || elem.vaccination_status == "Partially Vaccinated")
 				b_ids.push({ id: elem.beneficiary_reference_id, name: elem.name });
 		});
 
@@ -456,7 +456,7 @@ class cowinWorker {
 		let b_ids = [];
 
 		bList.beneficiaries.forEach(elem => {
-			if (elem.vaccination_status == "Not Vaccinated")
+			if (elem.vaccination_status == "Not Vaccinated" || elem.vaccination_status == "Partially Vaccinated")
 				b_ids.push({ id: elem.beneficiary_reference_id, name: elem.name });
 		});
 
