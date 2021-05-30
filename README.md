@@ -43,9 +43,9 @@ Users should manually login to the Co-Win website at least once so that one OTP 
 
  ![7](https://user-images.githubusercontent.com/37744870/120007690-ce114e00-bff7-11eb-94c1-06cadcd9200a.png)
  
- 10. A new tab opens up. Wait until the indicator on the top right of the screen turns **green**. *Do not manually click anywhere on the window, or refresh/close this tab. Doing any of these would result in you failing to log in to the system.*
+ 10. A new tab opens up. Wait until the indicator on the top-left of the screen turns **green**. *Do not manually click anywhere on the window, or refresh/close this tab. Doing any of these would result in you failing to log in to the system.*
 
- ![8](https://user-images.githubusercontent.com/37744870/120007692-cea9e480-bff7-11eb-9736-a2e27bb04fb0.png)
+ ![8](https://user-images.githubusercontent.com/37744870/120104643-1739dd00-c173-11eb-8784-98ad7144d73d.png)
  
  11. Go back to the Automated vaccine slot booking page and login using your UMANG phone number and MPIN.
 

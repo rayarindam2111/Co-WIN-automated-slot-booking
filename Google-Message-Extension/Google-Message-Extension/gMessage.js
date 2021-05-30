@@ -39,8 +39,8 @@ const init = async () => {
 
   const signalIcon = `<div id="msgStatus" style="
                       position: absolute;
-                      top: 20px;
-                      right: 12px;
+                      top: 24px;
+                      left: 115px;
                       width: 25px;
                       height: 25px;
                       background-color: #f00;
