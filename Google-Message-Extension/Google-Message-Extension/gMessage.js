@@ -7,7 +7,7 @@ const init = async () => {
     });
   }
 
-  window.addEventListener("beforeunload", function (event) {
+  window.addEventListener("beforeunload", (event) => {
     mainWindow.postMessage({
       type: "gMessage",
       message: {
@@ -19,7 +19,7 @@ const init = async () => {
     event.preventDefault();
   });
 
-  window.addEventListener("unload", function (event) {
+  window.addEventListener("unload", (event) => {
     mainWindow.postMessage({
       type: "gMessage",
       message: {
@@ -32,9 +32,9 @@ const init = async () => {
   console.log('Google Messages vaccine extension loaded.');
 
   var watchForOTP = false;
+  var alreadySentOTP = false;
 
   var targetNode = null;
-  var textSender = null;
   var loaded = false;
 
   const signalIcon = `<div id="msgStatus" style="
@@ -53,43 +53,61 @@ const init = async () => {
                     </div>`;
   document.body.insertAdjacentHTML("beforeend", signalIcon);
 
+  const processAndSendOTP = (sender, textOTP) => {
+    let OTP = textOTP.split('CoWIN is ')[1].split(".")[0];
+    console.log({ sender, textOTP, OTP });
+    mainWindow.postMessage({
+      type: "gMessage",
+      message: {
+        command: "OTP",
+        data: OTP
+      }
+    }, "*");
+  }
 
-  const configNewMessage = { childList: true };
-  const observerNewMessage = new MutationObserver(function (mutationsList, observer) {
-    if (!watchForOTP) return;
+  const configNewMessage = { childList: true, subtree: true };
+  const observerNewMessage = new MutationObserver((mutationsList) => {
+    if (!watchForOTP || alreadySentOTP) return;
 
     for (const mutation of mutationsList) {
-      if (mutation.type === 'childList' && mutation.addedNodes[0] && mutation.addedNodes[0].nodeName.toUpperCase() == "MWS-MESSAGE-WRAPPER") {
-        let msgID = mutation.addedNodes[0].getAttribute('msg-id');
-        let lastMsg = mutation.addedNodes[0].getAttribute('is-last');
-        let textOTP = mutation.addedNodes[0].firstElementChild.innerText;
-        let OTP = textOTP.split('CoWIN is ')[1].split(".")[0];
-
-        if (lastMsg) {
-          console.log({ 'msgID': msgID, 'lastMsg': lastMsg, 'OTP': OTP });
-
-          mainWindow.postMessage({
-            type: "gMessage",
-            message: {
-              command: "OTP",
-              data: OTP
-            }
-          }, "*");
+      if (mutation.type === 'childList' && mutation.addedNodes[0]) {
+        if (mutation.addedNodes[0].nodeName.toLowerCase() == "mws-conversation-list-item") {
+          let base = mutation.addedNodes[0].firstElementChild.children[1];
+          let sender = base.firstElementChild.textContent;
+          if (sender.endsWith('NHPSMS')) {
+            let textOTP = base.lastElementChild.textContent;
+            processAndSendOTP(sender, textOTP);
+            alreadySentOTP = true;
+            break;
+          }
         }
-
+        else if (mutation.addedNodes[0].nodeName.toLowerCase() == "#text") {
+          let curElem = mutation.addedNodes[0];
+          let base = curElem.parentNode.parentNode.parentNode.parentNode;
+          let headElement = base.parentNode.parentNode;
+          if (headElement.nodeName.toLowerCase() == "mws-conversation-list-item") {
+            let sender = base.firstElementChild.textContent;
+            if (sender.endsWith('NHPSMS')) {
+              let textOTP = curElem.data;
+              processAndSendOTP(sender, textOTP);
+              alreadySentOTP = true;
+              break;
+            }
+          }
+        }
       }
     }
   });
 
   const configPageChange = { subtree: true, childList: true };
-  const observerPageChange = new MutationObserver(async function (mutations) {
+  const observerPageChange = new MutationObserver(async (mutations) => {
     for (const mutation of mutations) {
       let removed = Array.from(mutation.removedNodes).some(parent => parent.contains(targetNode));
       if (removed) {
         observerPageChange.disconnect();
         observerNewMessage.disconnect();
 
-        await waitForSelection();
+        await waitForLoad();
 
         observerNewMessage.observe(targetNode, configNewMessage);
         observerPageChange.observe(document.body, configPageChange);
@@ -101,44 +119,21 @@ const init = async () => {
     }
   });
 
-
-  let conversations = null;
-  while (!conversations) {
-    conversations = document.querySelector("mws-conversations-list>nav>div");
-    await timeout(100);
-  }
-
-  let conversationCount = conversations.childElementCount;
-  for (let i = 0; i < conversationCount; i++) {
-    let a = conversations.children[i].firstElementChild;
-    if (a.children[1].firstElementChild.innerText.toUpperCase().endsWith('NHPSMS')) {
-      a.click();
-      break;
-    }
-  }
-
-  document.querySelector("mws-conversations-list>nav>div").addEventListener('click', async function () {
-    await waitForSelection();
-  });
-
-  const waitForSelection = async function () {
-    targetNode = null;
-    textSender = null;
-    loaded = false;
-
+  const waitForLoad = async () => {
     document.getElementById('msgStatus').style.backgroundColor = '#f00';
 
-    while (!(targetNode && textSender.endsWith('NHPSMS') && loaded)) {
-      targetNode = document.querySelector("mws-messages-list>mws-bottom-anchored>div>div>div.content");
-      textSender = document.querySelector("mws-header>div>div>h2.title") && document.querySelector("mws-header>div>div>h2.title").innerText.toUpperCase();
-      loaded = document.querySelector("mws-messages-list > mws-spinner") && document.querySelector("mws-messages-list > mws-spinner").classList.contains('hide');
+    targetNode = null;
+    loaded = false;
+    while (!(targetNode && loaded)) {
+      targetNode = document.querySelector("mws-conversations-list>nav>div.conv-container");
+      loaded = document.querySelector("mws-conversations-list>nav>mws-spinner") && document.querySelector("mws-conversations-list>nav>mws-spinner").classList.contains('hide');
       await timeout(200);
     }
 
     document.getElementById('msgStatus').style.backgroundColor = '#0f0';
   }
 
-  await waitForSelection();
+  await waitForLoad();
 
   observerNewMessage.observe(targetNode, configNewMessage);
   observerPageChange.observe(document.body, configPageChange);
@@ -152,6 +147,7 @@ const init = async () => {
     if (command == 'watchForOTP') {
       console.log('Watching for OTP...');
       watchForOTP = true;
+      alreadySentOTP = false;
     }
     else if (command == 'stopWatchOTP') {
       console.log('Stopped watching for OTP.');
