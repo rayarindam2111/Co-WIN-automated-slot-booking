@@ -40,7 +40,7 @@ const init = async () => {
   const signalIcon = `<div id="msgStatus" style="
                       position: absolute;
                       top: 24px;
-                      left: 115px;
+                      left: 24px;
                       width: 25px;
                       height: 25px;
                       background-color: #f00;
@@ -119,6 +119,20 @@ const init = async () => {
     }
   });
 
+  const waitForHeader = async () => {
+    document.getElementById('msgStatus').style.left = '24px';
+
+    let headerNode = null;
+    let pageLoadEnd = false;
+    while (!(headerNode && pageLoadEnd)) {
+      headerNode = document.querySelector("mw-main-nav>div");
+      pageLoadEnd = !document.querySelector("#loader");
+      await timeout(100);
+    }
+
+    document.getElementById('msgStatus').style.left = '115px';
+  }
+
   const waitForLoad = async () => {
     document.getElementById('msgStatus').style.backgroundColor = '#f00';
 
@@ -133,6 +147,7 @@ const init = async () => {
     document.getElementById('msgStatus').style.backgroundColor = '#0f0';
   }
 
+  await waitForHeader();
   await waitForLoad();
 
   observerNewMessage.observe(targetNode, configNewMessage);
