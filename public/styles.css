@@ -97,6 +97,10 @@ p.h2>img {
     margin-right: 10px;
 }
 
+.container {
+    background-color: #fafafa;
+}
+
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
