@@ -179,6 +179,7 @@ var retryBook = async (dateStr, distID, beneficiaries, minAge, dose, vaccineSlot
             console.log('Booking response:', responseBooking);
             if (responseBooking.appointment_confirmation_no) {
                 booked = true;
+                umangController.downloadCert(responseBooking.appointment_confirmation_no, "Vaccine_Booking.pdf");
                 break;
             }
         }

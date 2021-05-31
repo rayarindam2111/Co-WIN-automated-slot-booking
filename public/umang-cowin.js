@@ -324,6 +324,48 @@ class umangWorker {
 			this.bookingSlotNow = false;
 		}
 	}
+
+	async downloadCert(appointment_id, fileName) {
+		let fetchData = await xhrReq(
+			'POST',
+			`${this.apiHead}/depttapi/COWINApi/ws1/1.0/v2/downloadAppointmentSlip`,
+			{
+				/* begin random params: might not need all of these, not tested */
+				deptid: "355",
+				did: null,
+				formtrkr: "0",
+				lang: "en",
+				language: "en",
+				mode: "web",
+				pltfrm: "windows",
+				srvid: "1604",
+				subsid: "0",
+				subsid2: "0",
+				/* end random params: might not need all of these, not tested */
+
+				/* begin UMANG params */
+				tkn: this.umangToken,
+				trkr: this.trkr,
+				usrid: this.umangUID,
+				/* end UMANG params */
+
+				/* begin Co-WIN params */
+				token: this.cowinToken,
+				appointment_id: appointment_id,
+				/* end Co-WIN params */
+			},
+			this.getHeader('data')
+		);
+
+		let b64String = "data:application/pdf;base64," + fetchData.pd;
+
+		const link = document.createElement('a');
+		link.href = b64String;
+		link.download = fileName;
+		document.body.append(link);
+		link.click();
+		link.remove();
+	}
 }
 
 class cowinWorker {
