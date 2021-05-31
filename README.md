@@ -1,4 +1,3 @@
-
 # ![icon](https://user-images.githubusercontent.com/37744870/120004844-dd42cc80-bff4-11eb-8a07-6c4da10d6a5d.png) Co-WIN automated slot booking
 ##### _Automatically book vaccine slots as and when they become available_
 
@@ -8,7 +7,7 @@ This application aims to automatically book vaccine slots for registered benefic
 > The setup procedure is demonstrated for Google Chrome.
 > A similar procedure should be followed for other webkit browsers as well.
 
-Users should manually login to the Co-Win website at least once so that one OTP from the same is stored on their phone.  The application automatically sends out further requests for OTPs every 12 minutes. To automatically capture the OTPs received on the phone in the browser, Google Messages is used along with a browser extension. 
+The application automatically sends out requests for OTPs once every 12 minutes. To automatically capture the OTPs received on the phone in the browser, Google Messages is used along with a browser extension. 
 
  1. Make sure [Google Messages](https://play.google.com/store/apps/details?id=com.google.android.apps.messaging) is installed and selected as the default SMS app on your phone.
  
