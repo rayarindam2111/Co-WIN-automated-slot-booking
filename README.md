@@ -50,9 +50,15 @@ The application automatically sends out requests for OTPs once every 12 minutes.
 
  ![9](https://user-images.githubusercontent.com/37744870/120007696-cf427b00-bff7-11eb-9cb0-0350cc01a8a8.png)
  
- 12. Select your vaccine preferences and click on Start. A vaccine booking will be automatically made once a slot becomes available.
+ 12. Select your vaccine preferences and click on Start. A vaccine booking will be made automatically once a slot becomes available.
  
  ![10](https://user-images.githubusercontent.com/37744870/120007699-cfdb1180-bff7-11eb-88a7-2d7f243e2b1c.png)
+
+ 13. The appointment certificate gets downloaded once a booking is made.
+ 
+ ![demo](https://user-images.githubusercontent.com/37744870/120281236-52a0ec80-c2d6-11eb-92af-55e46b81682b.png)
+ 
+You can login to the official [Co-WIN portal](https://selfregistration.cowin.gov.in/) to reschedule or cancel the appointment if necessary.
 
 ## License
 GNU General Public License v3.0
