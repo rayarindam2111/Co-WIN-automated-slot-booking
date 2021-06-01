@@ -111,6 +111,20 @@ var respondToUI = async (command, data) => {
     }
 }
 
+var normalizeDate = (dateStr) => { //dd-mm-yyyy
+    if (dateStr) {
+        if (typeof dateStr == 'string') {
+            let dateParts = dateStr.split('-');
+            dateStr = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+            dateStr = Date.parse(dateStr);
+        }
+        dateStr = new Date(dateStr);
+        dateStr.setHours(0, 0, 0, 0);
+        dateStr = dateStr.getTime();
+    }
+    return dateStr;
+}
+
 var loadValues = async () => {
     let data = {};
     data.state = JSON.parse(sessionStorage.getItem("state"));
@@ -122,6 +136,7 @@ var loadValues = async () => {
     data.feeType = JSON.parse(sessionStorage.getItem("feeType"));
     data.vaccineName = JSON.parse(sessionStorage.getItem("vaccineName"));
     data.frequency = JSON.parse(sessionStorage.getItem("frequency"));
+    data.date = JSON.parse(sessionStorage.getItem("date"));
 
     let sList = await cowinController.getStateList();
     UI.performCommand('states', sList);
@@ -138,8 +153,8 @@ var loadValues = async () => {
     bookingOptions = data;
 }
 
-var retryBook = async (dateStr, distID, beneficiaries, minAge, dose, vaccineSlot, feeType, vaccineName) => {
-    let calendarData = await umangController.getCalendarList(distID, dateStr);
+var retryBook = async (dateStart, dateEnd, distID, beneficiaries, minAge, dose, vaccineSlot, feeType, vaccineName) => {
+    let calendarData = await umangController.getCalendarList(distID, dateStart);
     let booked = false;
 
     availableSlots = [];
@@ -164,6 +179,7 @@ var retryBook = async (dateStr, distID, beneficiaries, minAge, dose, vaccineSlot
             if (session.min_age_limit > minAge) continue;
             if (session[`available_capacity_dose${dose}`] == 0) continue;
             if (vaccineName != "0" && vaccineName.toLowerCase() != session.vaccine.toLowerCase()) continue;
+            if (dateEnd && (normalizeDate(session.date) > dateEnd)) continue;
 
             let slotString = session.slots.slice(vaccineSlot)[0];
             let session_id = session.session_id;
@@ -200,14 +216,16 @@ var main = async () => {
     let feeType = bookingOptions.feeType;
     let vaccineName = bookingOptions.vaccineName;
     let frequency = bookingOptions.frequency;
+    let startDate = normalizeDate(bookingOptions.date.start || Date.now());
+    let endDate = normalizeDate(bookingOptions.date.end);
 
-    let today = Date.now();
+
     let timerInterval = 1000 * (300 / frequency);
 
     let booked = false;
 
     let tryFunc = async function () {
-        booked = await retryBook(today, district, beneficiary, age, dose, slot, feeType, vaccineName);
+        booked = await retryBook(startDate, endDate, district, beneficiary, age, dose, slot, feeType, vaccineName);
         let status = "";
         let lastUpdated = new Date(Date.now()).toLocaleString();
 

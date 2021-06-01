@@ -105,6 +105,18 @@ p.h2>img {
     border-width: 0.14em;
 }
 
+.form-control[readonly]:not([disabled]) {
+    background-color: unset;
+}
+
+#dateRangePicker input:not([disabled]) {
+    cursor: pointer;
+}
+
+#status, #lastUpdated {
+    background-color: #e9ecef;
+}
+
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }

@@ -5,6 +5,7 @@ class ui {
         this.beneficiaries = { id: [], name: [] };
         this.beneficiaryModal = null;
         this.selectedBeneficiaries = [];
+        this.datePicker = null;
 
         this.attachEventListeners();
     }
@@ -17,6 +18,19 @@ class ui {
         this.toast = toastList[0];
 
         this.beneficiaryModal = new bootstrap.Modal(document.getElementById('beneficiaryModal'));
+
+        let datePicker = document.getElementById('dateRangePicker');
+        this.datePicker = new DateRangePicker(datePicker, {
+            buttonClass: 'btn',
+            autohide: true,
+            clearBtn: true,
+            todayBtn: true,
+            todayHighlight: true,
+            todayBtnMode: 1,
+            allowOneSidedRange: true,
+            format: 'dd MM yyyy'
+        });
+        this.datePicker.setDates('today', { clear: true });
 
         let stateSelect = document.getElementById('stateSelect');
 
@@ -63,6 +77,9 @@ class ui {
             else
                 beneficiariestoSend = [beneficiariestoSend];
 
+            let datesSelected = this.datePicker.getDates('dd-mm-yyyy');
+            let date = { start: datesSelected[0], end: datesSelected[1] };
+
             let message = {
                 state: parseInt(document.getElementById('stateSelect').value),
                 district: parseInt(document.getElementById('districtSelect').value),
@@ -73,7 +90,8 @@ class ui {
                 feeType: document.getElementById('paymentSelect').value,
                 vaccineName: document.getElementById('vaccineSelect').value,
                 frequency: parseInt(document.getElementById('rangeDuration').value),
-                captcha: document.getElementById('captchaInput').value
+                captcha: document.getElementById('captchaInput').value,
+                date: date
             }
 
             this.optionsCallback('updateValue', message);
@@ -155,11 +173,13 @@ class ui {
             document.getElementById('captchaInput').setAttribute("disabled", "");
             document.getElementById('rangeDuration').setAttribute("disabled", "");
             document.getElementById('startButton').setAttribute("disabled", "");
+            document.getElementById('dateFromSelect').setAttribute("disabled", "");
+            document.getElementById('dateToSelect').setAttribute("disabled", "");
+
+            document.querySelector('#lastUpdated>div.spinner-border').classList.remove('d-none');
 
             document.querySelector('#status>span.textData').innerText = '-';
             document.querySelector('#lastUpdated>span.textData').innerText = '-';
-            document.getElementById('status').style.backgroundColor = '#e9ecef';
-            document.querySelector('#lastUpdated>div.spinner-border').classList.remove('d-none');
 
             document.getElementById('stopButton').removeAttribute("disabled", "");
         }
@@ -175,6 +195,9 @@ class ui {
             document.getElementById('captchaInput').removeAttribute("disabled", "");
             document.getElementById('rangeDuration').removeAttribute("disabled", "");
             document.getElementById('startButton').removeAttribute("disabled", "");
+            document.getElementById('dateFromSelect').removeAttribute("disabled", "");
+            document.getElementById('dateToSelect').removeAttribute("disabled", "");
+
             document.querySelector('#lastUpdated>div.spinner-border').classList.add('d-none');
 
             document.getElementById('stopButton').setAttribute("disabled", "");
@@ -211,6 +234,7 @@ class ui {
             data.feeType && (data.feeType != -1) && (document.getElementById('paymentSelect').value = data.feeType);
             data.vaccineName && (data.vaccineName != -1) && (document.getElementById('vaccineSelect').value = data.vaccineName);
             data.frequency && (data.frequency != -1) && (document.getElementById('rangeDuration').value = data.frequency);
+            data.date && this.datePicker.setDates(data.date.start || 'today', data.date.end || { clear: true });
         }
     }
 }
