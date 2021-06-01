@@ -203,11 +203,17 @@
             <div class="row mt-2 mb-3">
                 <div class="col-6 input-group-lg">
                     <label for="status" class="form-label">Status:</label>
-                    <input id="status" class="form-control" type="text" placeholder="" disabled readonly value="-">
+                    <div id="status" class="form-control d-flex align-items-center" readonly>
+                        <span class="textData">-</span>
+                    </div>
                 </div>
                 <div class="col-6 input-group-lg">
                     <label for="lastUpdated" class="form-label">Last Updated at:</label>
-                    <input id="lastUpdated" class="form-control" type="text" placeholder="" disabled readonly value="-">
+                    <div id="lastUpdated" class="form-control d-flex align-items-center" readonly>
+                        <span class="textData">-</span>
+                        <div class="spinner-border spinner-border-sm ms-auto d-none" role="status">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

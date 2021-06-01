@@ -155,6 +155,12 @@ class ui {
             document.getElementById('captchaInput').setAttribute("disabled", "");
             document.getElementById('rangeDuration').setAttribute("disabled", "");
             document.getElementById('startButton').setAttribute("disabled", "");
+
+            document.querySelector('#status>span.textData').innerText = '-';
+            document.querySelector('#lastUpdated>span.textData').innerText = '-';
+            document.getElementById('status').style.backgroundColor = '#e9ecef';
+            document.querySelector('#lastUpdated>div.spinner-border').classList.remove('d-none');
+
             document.getElementById('stopButton').removeAttribute("disabled", "");
         }
         else if (command == "stopSuccess") {
@@ -169,12 +175,14 @@ class ui {
             document.getElementById('captchaInput').removeAttribute("disabled", "");
             document.getElementById('rangeDuration').removeAttribute("disabled", "");
             document.getElementById('startButton').removeAttribute("disabled", "");
+            document.querySelector('#lastUpdated>div.spinner-border').classList.add('d-none');
+
             document.getElementById('stopButton').setAttribute("disabled", "");
         }
         else if (command == "update") {
-            document.getElementById('status').value = data.status;
-            document.getElementById('status').style.backgroundColor = data.status.startsWith('Booked') ? '#4dea4d' : '#e9ecef';
-            document.getElementById('lastUpdated').value = data.lastUpdated;
+            document.querySelector('#status>span.textData').innerText = data.status;
+            document.getElementById('status').style.backgroundColor = data.status.startsWith('Booked') ? '#3fe03f' : '#e9ecef';
+            document.querySelector('#lastUpdated>span.textData').innerText = data.lastUpdated;
         }
         else if (command == "errorMessage") {
             if (data) {

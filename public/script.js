@@ -107,6 +107,7 @@ var respondToUI = async (command, data) => {
     else if (command == 'stop') {
         clearInterval(bookingTimer);
         //clearInterval(loginTimer);
+        bookingTimer = null;
     }
 }
 
@@ -216,6 +217,9 @@ var main = async () => {
         else {
             clearInterval(bookingTimer);
             clearInterval(loginTimer);
+            bookingTimer = null;
+            loginTimer = null;
+
             status = 'Booked slot!';
 
             UI.performCommand('stopSuccess', '');
@@ -224,6 +228,11 @@ var main = async () => {
         // console.log(status, lastUpdated);
         UI.performCommand('update', { status, lastUpdated });
         return booked;
+    }
+
+    if (!loginTimer) {
+        await reLogin();
+        loginTimer = setInterval(reLogin, LOGIN_REFRESH_TOKEN);
     }
 
     //booked = await tryFunc();

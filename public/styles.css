@@ -101,6 +101,10 @@ p.h2>img {
     background-color: #fafafa;
 }
 
+#lastUpdated>div.spinner-border {
+    border-width: 0.14em;
+}
+
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
