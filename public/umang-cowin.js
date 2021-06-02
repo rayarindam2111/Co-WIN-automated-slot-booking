@@ -43,7 +43,7 @@ class umangWorker {
 	}
 
 	dateStr(dateVal) {
-		let date = new Date(dateVal);
+	        let date = new Date(dateVal);
 
 		let day = String(date.getDate()).padStart(2, '0');
 		let month = String(date.getMonth() + 1).padStart(2, '0');
@@ -53,9 +53,21 @@ class umangWorker {
 	}
 
 	generateTRKR() {
-		return `UW-${["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"][Math.floor(26 * Math.random())] + ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"][Math.floor(26 * Math.random())] + (new Date).toISOString().slice(-24).replace(/\D/g, "").slice(0, 14)}`;
-	}
-
+                return `UW-${"abcdefghijklmnopqrstuvwxyz"
+                        .split("")
+                        .sort(() => Math.random() - Math.random())
+                        .slice(0, 2)
+                        .join("")
+                        .toUpperCase()
+                        .replace(/^(.)|\s+(.)/g, (c) =>
+                                c.toLowerCase()
+                        )}${new Date()
+                        .toISOString()
+                        .slice(-24)
+                        .replace(/\D/g, "")
+                        .slice(0, 14)}`;
+        }
+	
 	getHeader(authType) {
 		let header = {
 			"accept": "application/json",
