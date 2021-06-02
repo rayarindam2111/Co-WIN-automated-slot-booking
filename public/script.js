@@ -129,6 +129,8 @@ var loadValues = async () => {
     let data = {};
     data.state = JSON.parse(sessionStorage.getItem("state"));
     data.district = JSON.parse(sessionStorage.getItem("district"));
+    data.pincode = JSON.parse(sessionStorage.getItem("pincode"));
+    data.selectAreaOption = JSON.parse(sessionStorage.getItem("selectAreaOption"));
     data.beneficiary = JSON.parse(sessionStorage.getItem("beneficiary"));
     data.age = JSON.parse(sessionStorage.getItem("age"));
     data.dose = JSON.parse(sessionStorage.getItem("dose"));
@@ -153,8 +155,8 @@ var loadValues = async () => {
     bookingOptions = data;
 }
 
-var retryBook = async (dateStart, dateEnd, distID, beneficiaries, minAge, dose, vaccineSlot, feeType, vaccineName) => {
-    let calendarData = await umangController.getCalendarList(distID, dateStart);
+var retryBook = async (dateStart, dateEnd, areaDetails, beneficiaries, minAge, dose, vaccineSlot, feeType, vaccineName) => {
+    let calendarData = await umangController.getCalendarList(areaDetails.method, areaDetails.id, dateStart);
     let booked = false;
 
     availableSlots = [];
@@ -208,6 +210,7 @@ var retryBook = async (dateStart, dateEnd, distID, beneficiaries, minAge, dose, 
 }
 
 var main = async () => {
+    let selectAreaOption = bookingOptions.selectAreaOption;
     let district = bookingOptions.district;
     let beneficiary = bookingOptions.beneficiary;
     let age = bookingOptions.age;
@@ -219,13 +222,21 @@ var main = async () => {
     let startDate = normalizeDate(bookingOptions.date.start || Date.now());
     let endDate = normalizeDate(bookingOptions.date.end);
 
+    let areaDetails = { method: selectAreaOption };
+    if (selectAreaOption == 'stateAndDistrict') {
+        areaDetails.id = bookingOptions.district;
+    }
+    else if (selectAreaOption == 'pinCode') {
+        areaDetails.id = bookingOptions.pincode;
+    }
+
 
     let timerInterval = 1000 * (300 / frequency);
 
     let booked = false;
 
     let tryFunc = async function () {
-        booked = await retryBook(startDate, endDate, district, beneficiary, age, dose, slot, feeType, vaccineName);
+        booked = await retryBook(startDate, endDate, areaDetails, beneficiary, age, dose, slot, feeType, vaccineName);
         let status = "";
         let lastUpdated = new Date(Date.now()).toLocaleString();
 

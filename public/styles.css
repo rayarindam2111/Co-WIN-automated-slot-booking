@@ -117,6 +117,10 @@ p.h2>img {
     background-color: #e9ecef;
 }
 
+input[name=stateOrPIN]:not([disabled]) {
+    cursor: pointer;
+}
+
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }

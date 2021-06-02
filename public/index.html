@@ -110,18 +110,29 @@
                 </div>
             </div>
             <hr>
-            <div class="row">
-                <div class="col-6">
-                    <label for="stateSelect" class="form-label">Select State:</label>
-                    <select class="form-select mb-2" id="stateSelect">
-                        <option selected value="-1">-</option>
-                    </select>
+            <div class="row mb-2">
+                <div class="col-6"><label for="stateSelect" class="form-label">Select State and District:</label>
+                    <div class="input-group">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="radio" name="stateOrPIN" checked
+                                value="stateAndDistrict">
+                        </div>
+                        <select class="form-select" id="stateSelect">
+                            <option selected value="-1">State</option>
+                        </select>
+                        <select class="form-select" id="districtSelect">
+                            <option value="-1">District</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <label for="districtSelect" class="form-label">Select district:</label>
-                    <select class="form-select mb-2" id="districtSelect">
-                        <option value="-1">-</option>
-                    </select>
+                <div class="col-6"><label for="pinSelect" class="form-label">Select Pincode:</label>
+                    <div class="input-group">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="radio" name="stateOrPIN" value="pinCode">
+                        </div>
+                        <input type="number" class="form-control" aria-label="Pincode"
+                            placeholder="Enter vaccine centre pincode" id="pinSelect" disabled>
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -177,13 +188,39 @@
             <div class="row mb-2" id="dateRangePicker">
                 <div class="col-6">
                     <label for="dateFromSelect" class="form-label">Start Date:</label>
-                    <input id="dateFromSelect" class="form-control" type="text" placeholder="Today"
-                        aria-label="Start Date" readonly>
+                    <div class="input-group">
+                        <input id="dateFromSelect" class="form-control" type="text" placeholder="Today"
+                            aria-label="Start Date" readonly>
+                        <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z">
+                                </path>
+                                <path
+                                    d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z">
+                                </path>
+                            </svg>
+                        </span>
+                    </div>
                 </div>
                 <div class="col-6">
                     <label for="dateToSelect" class="form-label">End Date:</label>
-                    <input id="dateToSelect" class="form-control" type="text" placeholder="No Limit"
-                        aria-label="End Date" readonly>
+                    <div class="input-group">
+                        <input id="dateToSelect" class="form-control" type="text" placeholder="No Limit"
+                            aria-label="End Date" readonly>
+                        <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z">
+                                </path>
+                                <path
+                                    d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z">
+                                </path>
+                            </svg>
+                        </span>
+                    </div>
                 </div>
             </div>
             <div class="row mb-2 d-none">

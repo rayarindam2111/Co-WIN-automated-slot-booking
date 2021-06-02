@@ -6,6 +6,7 @@ class ui {
         this.beneficiaryModal = null;
         this.selectedBeneficiaries = [];
         this.datePicker = null;
+        this.selectAreaOption = 'stateAndDistrict';
 
         this.attachEventListeners();
     }
@@ -32,14 +33,19 @@ class ui {
         });
         this.datePicker.setDates('today', { clear: true });
 
-        let stateSelect = document.getElementById('stateSelect');
+        let stateOrPinSelect = document.querySelectorAll('input[name=stateOrPIN]');
+        stateOrPinSelect.forEach((elem) => {
+            elem.addEventListener('click', () => {
+                this.changeAreaSelect(elem.value);
+            });
+        });
 
+        let stateSelect = document.getElementById('stateSelect');
         stateSelect.addEventListener('change', () => {
             this.optionsCallback('getDistricts', document.getElementById('stateSelect').value);
         });
 
         let beneficiarySelect = document.getElementById('beneficiarySelect');
-
         beneficiarySelect.addEventListener('change', () => {
             if (document.getElementById('beneficiarySelect').value == "custom") {
                 let str = '';
@@ -83,6 +89,8 @@ class ui {
             let message = {
                 state: parseInt(document.getElementById('stateSelect').value),
                 district: parseInt(document.getElementById('districtSelect').value),
+                pincode: parseInt(document.getElementById('pinSelect').value || -1),
+                selectAreaOption: this.selectAreaOption,
                 beneficiary: beneficiariestoSend,
                 age: parseInt(document.getElementById('ageSelect').value),
                 dose: parseInt(document.getElementById('doseSelect').value),
@@ -104,6 +112,21 @@ class ui {
             this.optionsCallback('stop', '');
             this.performCommand('stopSuccess');
         });
+    }
+
+    changeAreaSelect(value) {
+        if (value == 'stateAndDistrict') {
+            document.getElementById('pinSelect').setAttribute('disabled', '');
+            document.getElementById('stateSelect').removeAttribute('disabled', '');
+            document.getElementById('districtSelect').removeAttribute('disabled', '');
+        }
+        else if (value == 'pinCode') {
+            document.getElementById('stateSelect').setAttribute('disabled', '');
+            document.getElementById('districtSelect').setAttribute('disabled', '');
+            document.getElementById('pinSelect').removeAttribute('disabled', '');
+        }
+        document.querySelector(`input[value=${value}]`).checked = true;
+        this.selectAreaOption = value;
     }
 
     toastMessage(message) {
@@ -164,6 +187,8 @@ class ui {
         else if (command == "startSuccess") {
             document.getElementById('stateSelect').setAttribute("disabled", "");
             document.getElementById('districtSelect').setAttribute("disabled", "");
+            document.getElementById('pinSelect').setAttribute('disabled', '');
+            document.querySelectorAll('input[name=stateOrPIN]').forEach(elem => elem.setAttribute("disabled", ""));
             document.getElementById('beneficiarySelect').setAttribute("disabled", "");
             document.getElementById('ageSelect').setAttribute("disabled", "");
             document.getElementById('doseSelect').setAttribute("disabled", "");
@@ -186,6 +211,8 @@ class ui {
         else if (command == "stopSuccess") {
             document.getElementById('stateSelect').removeAttribute("disabled", "");
             document.getElementById('districtSelect').removeAttribute("disabled", "");
+            document.getElementById('pinSelect').removeAttribute('disabled', '');
+            document.querySelectorAll('input[name=stateOrPIN]').forEach(elem => elem.removeAttribute("disabled", ""));
             document.getElementById('beneficiarySelect').removeAttribute("disabled", "");
             document.getElementById('ageSelect').removeAttribute("disabled", "");
             document.getElementById('doseSelect').removeAttribute("disabled", "");
@@ -199,6 +226,8 @@ class ui {
             document.getElementById('dateToSelect').removeAttribute("disabled", "");
 
             document.querySelector('#lastUpdated>div.spinner-border').classList.add('d-none');
+
+            this.changeAreaSelect(this.selectAreaOption);
 
             document.getElementById('stopButton').setAttribute("disabled", "");
         }
@@ -227,6 +256,8 @@ class ui {
             let benValue = data.beneficiary && (data.beneficiary != -1) && ((data.beneficiary.length == 0 || data.beneficiary.length > 1) ? '0' : data.beneficiary[0]);
             data.state && (data.state != -1) && (document.getElementById('stateSelect').value = data.state);
             data.district && (data.district != -1) && (document.getElementById('districtSelect').value = data.district);
+            data.pincode && (data.pincode != -1) && (document.getElementById('pinSelect').value = data.pincode);
+            data.selectAreaOption && this.changeAreaSelect(data.selectAreaOption);
             data.beneficiary && (data.beneficiary != -1) && (document.getElementById('beneficiarySelect').value = benValue);
             data.age && (data.age != -1) && (document.getElementById('ageSelect').value = data.age);
             data.dose && (data.dose != -1) && (document.getElementById('doseSelect').value = data.dose);

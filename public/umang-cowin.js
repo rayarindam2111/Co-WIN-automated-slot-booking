@@ -181,10 +181,21 @@ class umangWorker {
 		await this.confirmOTPCowin(OTP);
 	}
 
-	async getCalendarList(districtID, dateString) {
+	async getCalendarList(method, id, dateString) {
+		let endpoint = null;
+		let payload = null;
+		if (method == 'stateAndDistrict') {
+			endpoint = 'calendarByDistrict';
+			payload = { district_id: id };
+		}
+		else if (method == 'pinCode') {
+			endpoint = 'calendarByPin';
+			payload = { pincode: id.toString() };
+		}
+
 		let fetchData = await xhrReq(
 			'POST',
-			`${this.apiHead}/depttapi/COWINApi/ws1/1.0/v2/calendarByDistrict`,
+			`${this.apiHead}/depttapi/COWINApi/ws1/1.0/v2/${endpoint}`,
 			{
 				/* begin random params: might not need all of these, not tested */
 				deptid: "355",
@@ -205,9 +216,9 @@ class umangWorker {
 				usrid: this.umangUID,
 				/* end UMANG params */
 
+				...payload,
 				token: this.cowinToken,
 				date: this.dateStr(dateString),
-				district_id: districtID,
 				vaccine: ""
 			},
 			this.getHeader('data')
