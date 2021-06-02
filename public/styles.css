@@ -117,6 +117,10 @@ p.h2>img {
     background-color: #e9ecef;
 }
 
+.btn.disabled, .btn:disabled {
+	opacity: 0.45;
+}
+
 input[name=stateOrPIN]:not([disabled]) {
     cursor: pointer;
 }
