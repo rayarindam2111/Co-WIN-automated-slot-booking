@@ -3,6 +3,22 @@
 
 This application aims to automatically book vaccine slots for registered beneficiaries on the [Co-WIN website](https://selfregistration.cowin.gov.in/) as per availability. Users need to have an account registered on [UMANG](https://web.umang.gov.in/web_new/register) with the same phone number that is registered with Co-WIN and enable the 4-digit MPIN login process. Options for vaccine registration are obtained beforehand and a booking is attempted once a slot becomes available. No manual intervention (OTP or captcha) from the user is needed (OTPs are generated automatically every 12 minutes).
 
+## Features
+
+ - Automatic sign-in without manual intervention (no need to enter OTPs or Captchas continuously)
+ - Options stored between sessions (no need to refill the form every time)
+ - Ability to select one or more custom beneficiaries
+ - Filtering using selected state and district
+ - Filtering using pincode
+ - Filtering using age limit
+ - Filtering using vaccine name
+ - Filtering using vaccine dose
+ - Filtering using vaccine price
+ - Filtering using vaccine slot
+ - Filtering using custom date ranges
+ - Ability to select update rate
+ - Auto-download of appointment certificate
+
 ## Setup
 > The setup procedure is demonstrated for Google Chrome.
 > A similar procedure should be followed for other webkit browsers as well.

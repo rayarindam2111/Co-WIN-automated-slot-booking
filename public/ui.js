@@ -205,6 +205,8 @@ class ui {
 
             document.querySelector('#status>span.textData').innerText = '-';
             document.querySelector('#lastUpdated>span.textData').innerText = '-';
+            document.getElementById('status').style.backgroundColor = '#e9ecef';
+
 
             document.getElementById('stopButton').removeAttribute("disabled", "");
         }
