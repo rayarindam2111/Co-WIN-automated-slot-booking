@@ -111,28 +111,28 @@
             </div>
             <hr>
             <div class="row mb-2">
-                <div class="col-6"><label for="stateSelect" class="form-label">Select State and District:</label>
-                    <div class="input-group">
-                        <div class="input-group-text">
-                            <input class="form-check-input mt-0" type="radio" name="stateOrPIN" checked
-                                value="stateAndDistrict">
+                <div class="col-6">
+                    <input class="form-check-input me-1" type="radio" name="stateOrPIN" checked value="stateAndDistrict"
+                        id="stateAndDistrictcheck">
+                    <label for="stateAndDistrictcheck" class="form-label">Search by State & District:</label>
+                    <div class="row">
+                        <div class="col-6">
+                            <select class="form-select" id="stateSelect">
+                                <option selected value="-1">State</option>
+                            </select>
                         </div>
-                        <select class="form-select" id="stateSelect">
-                            <option selected value="-1">State</option>
-                        </select>
-                        <select class="form-select" id="districtSelect">
-                            <option value="-1">District</option>
-                        </select>
+                        <div class="col-6">
+                            <select class="form-select" id="districtSelect">
+                                <option value="-1">District</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <div class="col-6"><label for="pinSelect" class="form-label">Select Pincode:</label>
-                    <div class="input-group">
-                        <div class="input-group-text">
-                            <input class="form-check-input mt-0" type="radio" name="stateOrPIN" value="pinCode">
-                        </div>
-                        <input type="number" class="form-control" aria-label="Pincode"
-                            placeholder="Enter vaccine centre pincode" id="pinSelect" disabled>
-                    </div>
+                <div class="col-6">
+                    <input class="form-check-input me-1" type="radio" name="stateOrPIN" value="pinCode" id="pincheck">
+                    <label for="pincheck" class="form-label">Search by Pincode:</label>
+                    <input type="number" class="form-control" aria-label="Pincode"
+                        placeholder="Enter vaccine centre pincode" id="pinSelect" disabled>
                 </div>
             </div>
             <div class="row">
@@ -145,7 +145,7 @@
                 <div class="col-6">
                     <label for="ageSelect" class="form-label">Select age:</label>
                     <select class="form-select mb-2" id="ageSelect">
-                        <option value="18">18 - 45 years</option>
+                        <option value="18">18 - 44 years</option>
                         <option value="45">45+ years</option>
                     </select>
                 </div>

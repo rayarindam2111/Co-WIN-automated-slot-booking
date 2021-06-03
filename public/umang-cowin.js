@@ -43,7 +43,7 @@ class umangWorker {
 	}
 
 	dateStr(dateVal) {
-	        let date = new Date(dateVal);
+		let date = new Date(dateVal);
 
 		let day = String(date.getDate()).padStart(2, '0');
 		let month = String(date.getMonth() + 1).padStart(2, '0');
@@ -53,21 +53,21 @@ class umangWorker {
 	}
 
 	generateTRKR() {
-                return `UW-${"abcdefghijklmnopqrstuvwxyz"
-                        .split("")
-                        .sort(() => Math.random() - Math.random())
-                        .slice(0, 2)
-                        .join("")
-                        .toUpperCase()
-                        .replace(/^(.)/g, (c) =>
-                                c.toLowerCase()
-                        )}${new Date()
-                        .toISOString()
-                        .slice(-24)
-                        .replace(/\D/g, "")
-                        .slice(0, 14)}`;
-        }
-	
+		return `UW-${"abcdefghijklmnopqrstuvwxyz"
+				.split("")
+				.sort(() => Math.random() - Math.random())
+				.slice(0, 2)
+				.join("")
+				.toUpperCase()
+				.replace(/^(.)/g, (c) => c.toLowerCase())
+			}${new Date()
+				.toISOString()
+				.slice(-24)
+				.replace(/\D/g, "")
+				.slice(0, 14)
+			}`;
+	}
+
 	getHeader(authType) {
 		let header = {
 			"accept": "application/json",
