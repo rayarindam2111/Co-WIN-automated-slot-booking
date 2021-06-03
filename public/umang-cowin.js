@@ -59,7 +59,7 @@ class umangWorker {
                         .slice(0, 2)
                         .join("")
                         .toUpperCase()
-                        .replace(/^(.)|\s+(.)/g, (c) =>
+                        .replace(/^(.)/g, (c) =>
                                 c.toLowerCase()
                         )}${new Date()
                         .toISOString()
