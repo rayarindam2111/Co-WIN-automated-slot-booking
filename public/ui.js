@@ -51,7 +51,7 @@ class ui {
                 let str = '';
                 for (let i = 0; i < this.beneficiaries.id.length; i++) {
                     str += `
-                    <div class="form-check">
+                    <div class="form-check col-5 offset-1">
                         <input class="form-check-input" type="checkbox" value="${this.beneficiaries.id[i]}" id="benCheck${i}" checked>
                         <label class="form-check-label" for="benCheck${i}">${this.beneficiaries.name[i]}</label>
                     </div>
