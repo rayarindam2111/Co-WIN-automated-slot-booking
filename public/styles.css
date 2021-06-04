@@ -85,7 +85,8 @@ p.h2>img {
 }
 
 .toast {
-    margin: 10px;
+    margin: 5px;
+    width: 300px;
 }
 
 .headerText {
@@ -118,7 +119,7 @@ p.h2>img {
 }
 
 .btn.disabled, .btn:disabled {
-	opacity: 0.45;
+    opacity: 0.45;
 }
 
 input[name=stateOrPIN]:not([disabled]) {

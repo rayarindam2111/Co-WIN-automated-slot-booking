@@ -54,12 +54,12 @@ class umangWorker {
 
 	generateTRKR() {
 		return `UW-${"abcdefghijklmnopqrstuvwxyz"
-				.split("")
-				.sort(() => Math.random() - Math.random())
-				.slice(0, 2)
-				.join("")
-				.toUpperCase()
-				.replace(/^(.)/g, (c) => c.toLowerCase())
+			.split("")
+			.sort(() => Math.random() - Math.random())
+			.slice(0, 2)
+			.join("")
+			.toUpperCase()
+			.replace(/^(.)/g, (c) => c.toLowerCase())
 			}${new Date()
 				.toISOString()
 				.slice(-24)
@@ -430,6 +430,10 @@ class cowinWorker {
 
 	getToken() {
 		return this.token;
+	}
+
+	setToken(token) {
+		this.token = token;
 	}
 
 	async digestMessage(message) {
