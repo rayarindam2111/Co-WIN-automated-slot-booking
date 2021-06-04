@@ -14,7 +14,7 @@ var loginTimer = null;
 var waitingForOTP = false;
 
 const DEFAULT_STATEID = 1;
-const LOGIN_REFRESH_TOKEN = 12 * (60 * 1000);
+const LOGIN_REFRESH_TOKEN = 3.25 * (60 * 1000);
 
 const timeout = function (time) {
     return new Promise(function (resolve, reject) {

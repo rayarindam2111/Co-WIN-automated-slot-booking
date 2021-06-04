@@ -540,7 +540,7 @@ class cowinWorker {
 			'GET',
 			`${this.apiHead}/appointment/sessions/calendarByDistrict?district_id=${districtID}&date=${this.dateStr(dateString)}`,
 			{},
-			this.getHeader(false)
+			this.getHeader(true)
 		);
 
 		this.calendarData = fetchData;
