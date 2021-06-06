@@ -45,6 +45,11 @@ class ui {
             this.optionsCallback('getDistricts', document.getElementById('stateSelect').value);
         });
 
+        let pinCodeSelect = document.getElementById('pinSelect');
+        pinCodeSelect.addEventListener('input', (e) => {
+            (! /^[1-9]\d{5}$/.test(e.target.value.trim())) ? e.target.classList.add('is-invalid') : e.target.classList.remove('is-invalid');
+        });
+
         let beneficiarySelect = document.getElementById('beneficiarySelect');
         beneficiarySelect.addEventListener('change', () => {
             if (document.getElementById('beneficiarySelect').value == "custom") {
@@ -89,7 +94,7 @@ class ui {
             let message = {
                 state: parseInt(document.getElementById('stateSelect').value),
                 district: parseInt(document.getElementById('districtSelect').value),
-                pincode: parseInt(document.getElementById('pinSelect').value || -1),
+                pincode: parseInt(document.getElementById('pinSelect').value.trim() || -1),
                 selectAreaOption: this.selectAreaOption,
                 beneficiary: beneficiariestoSend,
                 age: parseInt(document.getElementById('ageSelect').value),
