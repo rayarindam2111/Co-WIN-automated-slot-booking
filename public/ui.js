@@ -37,6 +37,8 @@ class ui {
         stateOrPinSelect.forEach((elem) => {
             elem.addEventListener('click', () => {
                 this.changeAreaSelect(elem.value);
+                if (elem.value != 'pinCode')
+                    document.getElementById('pinSelect').classList.remove('is-invalid');
             });
         });
 
